@@ -6,413 +6,319 @@
 <title>合盛跟单中心</title>
 <style>
 :root {
-  --bg: #0a0e17;
-  --card: #111827;
-  --card-hover: #1a2235;
-  --border: rgba(255,255,255,0.07);
-  --text: #f9fafb;
-  --text-sub: #9ca3af;
-  --text-muted: #6b7280;
-  --red: #ef4444;
-  --red-bg: rgba(239,68,68,0.1);
-  --amber: #f59e0b;
+  --bg: #0D0D0D;
+  --surface-1: #111111;
+  --surface-2: #161616;
+  --surface-3: #1C1C1C;
+  --surface-4: #222222;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.1);
+  --text-primary: #FFFFFF;
+  --text-secondary: #8A8A8A;
+  --text-tertiary: #525252;
+  --accent: #5E6AD2;
+  --green: #2DA94E;
+  --green-bg: rgba(45,169,78,0.1);
+  --red: #F23D3D;
+  --red-bg: rgba(242,61,61,0.1);
+  --amber: #F59E0B;
   --amber-bg: rgba(245,158,11,0.1);
-  --green: #22c55e;
-  --green-bg: rgba(34,197,94,0.1);
-  --blue: #3b82f6;
-  --blue-bg: rgba(59,130,246,0.1);
-  --radius: 14px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font: 'Inter','-apple-system','system-ui',sans-serif;
+  --transition: 150ms ease;
 }
 * {margin:0;padding:0;box-sizing:border-box}
 html,body {height:100%;overflow:hidden}
-body {
-  font-family:'Microsoft YaHei','PingFang SC',-apple-system,sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-.main {flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
-.main::-webkit-scrollbar {width:4px}
-.main::-webkit-scrollbar-thumb {background:rgba(255,255,255,0.1);border-radius:2px}
+body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--text-primary);height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
 
-/* Header */
-.header {
-  display:flex;justify-content:space-between;align-items:center;
-  padding:14px 20px;
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  flex-shrink:0;
-}
-.header-left {display:flex;align-items:center;gap:12px}
-.header-logo {font-size:20px}
-.header-title {font-size:17px;font-weight:700;letter-spacing:0.5px}
-.header-right {display:flex;align-items:center;gap:16px}
-.live-dot {width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.sync-time {font-size:12px;color:var(--text-muted)}
-.header-time {font-size:28px;font-weight:200;font-family:'Helvetica Neue',Arial,sans-serif;color:var(--text)}
+/* Layout */
+.app {display:flex;height:100vh;overflow:hidden}
+.sidebar {width:220px;background:var(--surface-1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-top {padding:16px 14px 12px;border-bottom:1px solid var(--border)}
+.sidebar-brand {font-size:14px;font-weight:600;letter-spacing:-0.01em}
+.sidebar-sub {font-size:12px;color:var(--text-tertiary);margin-top:2px}
+.nav-section {padding:8px 8px 4px}
+.nav-label {font-size:11px;font-weight:500;color:var(--text-tertiary);padding:4px 6px 6px;letter-spacing:0.04em;text-transform:uppercase}
+.nav-item {display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-secondary);font-size:13px;transition:all var(--transition);margin-bottom:1px}
+.nav-item:hover {background:var(--surface-2);color:var(--text-primary)}
+.nav-item.active {background:var(--surface-3);color:var(--text-primary)}
+.nav-icon {width:16px;height:16px;opacity:0.7;flex-shrink:0}
+.nav-item.active .nav-icon {opacity:1}
+.nav-badge {margin-left:auto;background:var(--surface-4);color:var(--text-tertiary);font-size:11px;padding:1px 6px;border-radius:10px;min-width:20px;text-align:center}
+.nav-badge.red {background:var(--red-bg);color:var(--red)}
+.sidebar-bottom {margin-top:auto;padding:12px 8px;border-top:1px solid var(--border)}
+.sidebar-user {display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--radius-sm)}
+.sidebar-avatar {width:24px;height:24px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
+.sidebar-user-name {font-size:13px}
 
-/* Stats Grid */
-.stats-grid {
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-}
-.stat-card {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px 14px;
-  text-align:center;
-  transition:all .2s;
-  cursor:pointer;
-}
-.stat-card:hover {background:var(--card-hover)}
-.stat-card.red {border-color:rgba(239,68,68,0.2)}
-.stat-card.amber {border-color:rgba(245,158,11,0.2)}
-.stat-card.green {border-color:rgba(34,197,94,0.2)}
-.stat-card.blue {border-color:rgba(59,130,246,0.2)}
-.stat-icon {font-size:22px;margin-bottom:8px}
-.stat-value {font-size:36px;font-weight:700;line-height:1}
-.stat-label {font-size:12px;color:var(--text-muted);margin-top:6px;text-transform:uppercase;letter-spacing:0.5px}
+.main {flex:1;display:flex;flex-direction:column;min-width:0}
+
+/* Topbar */
+.topbar {height:48px;background:var(--surface-1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
+.topbar-title {font-size:14px;font-weight:600}
+.topbar-right {display:flex;align-items:center;gap:12px}
+.topbar-sync {font-size:12px;color:var(--text-tertiary)}
+.topbar-time {font-size:20px;font-weight:400;color:var(--text-primary);letter-spacing:-0.02em}
+
+/* Content */
+.content {flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
+.content::-webkit-scrollbar {width:4px}
+.content::-webkit-scrollbar-thumb {background:var(--surface-4);border-radius:2px}
+.page {display:none;flex-direction:column;gap:16px}
+.page.active {display:flex}
+
+/* Stats */
+.stats-grid {display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.stat-card {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;transition:all var(--transition)}
+.stat-card:hover {border-color:var(--border-hover)}
+.stat-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.stat-label {font-size:11px;color:var(--text-tertiary);font-weight:500;letter-spacing:0.04em;text-transform:uppercase}
+.stat-value {font-size:28px;font-weight:600;letter-spacing:-0.03em;line-height:1}
 .stat-card.red .stat-value {color:var(--red)}
-.stat-card.amber .stat-value {color:var(--amber)}
 .stat-card.green .stat-value {color:var(--green)}
-.stat-card.blue .stat-value {color:var(--blue)}
 
 /* Panels */
-.panels {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  grid-template-rows:auto auto;
-  gap:16px;
-  flex:1;
-}
-.panel {
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:18px;
-  display:flex;
-  flex-direction:column;
-}
-.panel-header {
-  display:flex;justify-content:space-between;align-items:center;
-  margin-bottom:14px;flex-shrink:0;
-}
-.panel-title {font-size:15px;font-weight:600;color:var(--text)}
-.panel-badge {font-size:12px;color:var(--text-muted)}
-.panel-body {flex:1;overflow-y:auto;min-height:0}
+.panels {display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
+.panel {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;min-height:0}
+.panel-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}
+.panel-title {font-size:13px;font-weight:600}
+.panel-meta {font-size:12px;color:var(--text-tertiary)}
+.panel-body {flex:1;overflow-y:auto;min-height:120px}
 .panel-body::-webkit-scrollbar {width:3px}
-.panel-body::-webkit-scrollbar-thumb {background:rgba(255,255,255,0.08);border-radius:2px}
+.panel-body::-webkit-scrollbar-thumb {background:var(--surface-4);border-radius:2px}
+.panel-full {grid-column:1/-1}
 
 /* Emergency */
-.emergency-list {display:flex;flex-direction:column;gap:8px}
-.emergency-item {
-  display:flex;align-items:center;gap:12px;
-  background:var(--red-bg);
-  border:1px solid rgba(239,68,68,0.15);
-  border-radius:10px;padding:12px 14px;
-  cursor:pointer;transition:all .2s;
-}
-.emergency-item:hover {background:rgba(239,68,68,0.15)}
-.emergency-icon {font-size:18px}
+.emergency-item {display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);background:var(--surface-2);margin-bottom:4px;cursor:pointer;transition:background var(--transition)}
+.emergency-item:hover {background:var(--surface-3)}
+.emergency-dot {width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
 .emergency-info {flex:1;min-width:0}
-.emergency-code {font-size:14px;font-weight:600;color:var(--text)}
-.emergency-meta {font-size:12px;color:var(--text-muted);margin-top:2px}
-.emergency-days {font-size:13px;font-weight:600;color:var(--red)}
-.no-data {text-align:center;padding:30px 0;color:var(--text-muted);font-size:14px}
+.emergency-code {font-size:13px;font-weight:500;font-family:'SF Mono','Menlo',monospace}
+.emergency-meta {font-size:11px;color:var(--text-tertiary);margin-top:1px}
+.emergency-days {font-size:12px;font-weight:600;color:var(--red);white-space:nowrap}
 
-/* Production Progress */
-.progress-section {margin-bottom:20px}
-.progress-section:last-child {margin-bottom:0}
-.progress-label {font-size:13px;color:var(--text-sub);margin-bottom:8px;display:flex;justify-content:space-between}
-.progress-label span:last-child {color:var(--text-muted)}
-.progress-bar {height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
-.progress-fill {height:100%;border-radius:3px;transition:width .6s ease}
-.progress-fill.red {background:var(--red)}
-.progress-fill.amber {background:var(--amber)}
-.progress-fill.green {background:var(--green)}
-.progress-fill.blue {background:var(--blue)}
+/* Step progress */
+.step-list {display:flex;flex-direction:column;gap:6px}
+.step-row {display:flex;align-items:center;gap:10px}
+.step-name {font-size:12px;color:var(--text-secondary);width:60px;flex-shrink:0}
+.step-bar {flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.step-fill {height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
+.step-count {font-size:11px;color:var(--text-tertiary);width:30px;text-align:right;flex-shrink:0}
 
 /* Kanban */
-.kanban-tabs {display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.kanban-tab {
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:13px;
-  cursor:pointer;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);
-  color:var(--text-muted);
-  transition:all .2s;
-}
-.kanban-tab.active {background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);color:var(--text)}
-.kanban-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
-
-/* Order Card */
-.order-card {
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:10px;padding:13px;
-  cursor:pointer;transition:all .2s;
-}
-.order-card:hover {background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12)}
-.order-card.red {border-left:3px solid var(--red)}
-.order-card.amber {border-left:3px solid var(--amber)}
-.order-card.green {border-left:3px solid var(--green)}
-.order-card.blue {border-left:3px solid var(--blue)}
-.order-card-top {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.order-num {font-size:14px;font-weight:600;color:var(--text)}
-.order-status {font-size:11px;padding:3px 8px;border-radius:10px;font-weight:600}
-.order-status.red {background:var(--red-bg);color:var(--red)}
-.order-status.amber {background:var(--amber-bg);color:var(--amber)}
-.order-status.green {background:var(--green-bg);color:var(--green)}
-.order-status.blue {background:var(--blue-bg);color:var(--blue)}
-.order-customer {font-size:13px;color:var(--text-sub);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.order-meta {display:flex;justify-content:space-between;font-size:12px;color:var(--text-muted)}
-.order-progress {height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-top:8px}
-.order-progress-fill {height:100%;background:rgba(255,255,255,0.3);border-radius:2px}
+.kanban-filters {display:flex;gap:6px;margin-bottom:14px}
+.kb-tab {padding:5px 12px;border-radius:20px;font-size:12px;color:var(--text-secondary);background:none;border:1px solid transparent;cursor:pointer;transition:all var(--transition)}
+.kb-tab:hover {color:var(--text-primary);background:var(--surface-2)}
+.kb-tab.active {background:var(--surface-3);border-color:var(--border);color:var(--text-primary)}
+.kanban-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.kb-card {background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;cursor:pointer;transition:all var(--transition)}
+.kb-card:hover {border-color:var(--border-hover);background:var(--surface-3)}
+.kb-top {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.kb-num {font-size:13px;font-weight:600;font-family:'SF Mono','Menlo',monospace}
+.kb-status {font-size:11px;font-weight:500;padding:2px 7px;border-radius:10px}
+.kb-status.urgent {background:var(--red-bg);color:var(--red)}
+.kb-status.producing {background:var(--amber-bg);color:var(--amber)}
+.kb-status.done {background:var(--green-bg);color:var(--green)}
+.kb-customer {font-size:12px;color:var(--text-secondary);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kb-meta {display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-tertiary)}
+.kb-progress {flex:1;margin-right:10px}
+.kb-date {white-space:nowrap}
+.progress-bar {height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.progress-fill {height:100%;background:rgba(255,255,255,0.3);border-radius:2px;transition:width .3s}
 
 /* Inventory */
-.inventory-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
-.inventory-item {
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:10px;padding:14px;
-}
-.inv-top {display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.inv-name {font-size:14px;font-weight:600}
-.inv-stock {font-size:24px;font-weight:700}
-.inv-stock.green {color:var(--green)}
-.inv-stock.amber {color:var(--amber)}
-.inv-stock.red {color:var(--red)}
-.inv-num {font-size:12px;color:var(--text-muted)}
+.inv-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.inv-card {background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
+.inv-top {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.inv-name {font-size:13px;font-weight:500}
+.inv-stock {font-size:22px;font-weight:600;letter-spacing:-0.03em}
+.inv-stock.ok {color:var(--green)}
+.inv-stock.warn {color:var(--amber)}
+.inv-stock.low {color:var(--red)}
+.inv-num {font-size:11px;color:var(--text-tertiary);margin-top:2px}
 
-/* Bottom Nav */
-.nav {
-  display:flex;flex-shrink:0;
-  background:rgba(17,24,39,0.95);
-  backdrop-filter:blur(20px);
-  border-top:1px solid var(--border);
-}
-.nav-item {
-  flex:1;display:flex;flex-direction:column;align-items:center;
-  justify-content:center;padding:12px 0;
-  cursor:pointer;border:none;background:none;color:var(--text-muted);
-  transition:all .2s;font-size:11px;gap:4px;
-}
-.nav-item:hover,.nav-item.active {color:var(--text)}
-.nav-item.active {color:var(--blue)}
-.nav-icon {font-size:20px}
-.nav-label {font-size:11px;font-weight:500}
-
-/* Tab Pages */
-.tab-page {display:none;flex-direction:column;gap:16px}
-.tab-page.active {display:flex}
+/* Empty */
+.empty {text-align:center;padding:24px 0;color:var(--text-tertiary);font-size:13px}
 
 /* Modal */
-.modal {display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal {display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:20px}
 .modal.show {display:flex}
-.modal-content {background:var(--card);border:1px solid var(--border);border-radius:var(--radius);width:100%;max-width:480px;max-height:80vh;overflow-y:auto}
-.modal-header {padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-title {font-size:16px;font-weight:600}
-.modal-close {width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);border:none;color:var(--text);cursor:pointer;font-size:16px}
-.modal-close:hover {background:rgba(255,255,255,0.1)}
-.modal-body {padding:20px}
-.detail-row {display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.modal-content {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:420px;max-height:80vh;overflow-y:auto}
+.modal-header {padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title {font-size:14px;font-weight:600}
+.modal-close {width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover {background:var(--surface-3);color:var(--text-primary)}
+.modal-body {padding:16px 20px}
+.detail-row {display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
 .detail-row:last-child {border-bottom:none}
-.detail-label {font-size:14px;color:var(--text-muted)}
-.detail-value {font-size:14px;font-weight:500;text-align:right}
-.detail-value.red {color:var(--red)}
-.detail-value.green {color:var(--green)}
+.detail-label {font-size:13px;color:var(--text-tertiary)}
+.detail-value {font-size:13px;font-weight:500;text-align:right}
 
 /* Responsive */
-@media(max-width:1100px){
+@media(max-width:1100px) {
   .stats-grid {grid-template-columns:repeat(3,1fr)}
   .panels {grid-template-columns:1fr}
+  .sidebar {width:180px}
 }
-@media(max-width:700px){
-  .main {padding:12px}
-  .stats-grid {grid-template-columns:repeat(2,1fr);gap:8px}
-  .stat-card {padding:12px 8px}
-  .stat-value {font-size:28px}
-  .header-time {font-size:22px}
-  .panels {gap:12px}
-  .kanban-grid {grid-template-columns:1fr}
-  .inventory-grid {grid-template-columns:1fr 1fr}
+@media(max-width:700px) {
+  .sidebar {display:none}
+  .stats-grid {grid-template-columns:repeat(2,1fr);gap:6px}
+  .stat-value {font-size:24px}
+  .content {padding:12px}
 }
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="header">
-  <div class="header-left">
-    <div class="header-logo">🏭</div>
-    <div class="header-title">合盛跟单中心</div>
-    <div class="live-dot"></div>
-  </div>
-  <div class="header-right">
-    <div class="sync-time" id="syncTime">同步中...</div>
-    <div class="header-time" id="headerTime">--:--</div>
-  </div>
-</div>
-
-<!-- Main Content -->
-<div class="main" id="mainContent">
-
-  <!-- ====== 仪表盘 Tab (老板大屏) ====== -->
-  <div id="dashboardPage" class="tab-page active">
-
-    <!-- Stats Row -->
-    <div class="stats-grid">
-      <div class="stat-card blue" onclick="switchKanbanTab('all')">
-        <div class="stat-icon">📋</div>
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-label">全部订单</div>
+<div class="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">合盛跟单</div>
+      <div class="sidebar-sub">Hesheng Orders</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">工作台</div>
+      <div class="nav-item active" id="nav-dashboard" onclick="switchPage('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+        仪表盘
+        <span class="nav-badge" id="navTotal">0</span>
       </div>
-      <div class="stat-card red" onclick="scrollToEmergency()">
-        <div class="stat-icon">🚨</div>
-        <div class="stat-value" id="statUrgent">0</div>
-        <div class="stat-label">紧急</div>
+      <div class="nav-item" id="nav-kanban" onclick="switchPage('kanban',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="4" height="12" rx="1" fill="currentColor"/><rect x="6" y="5" width="4" height="9" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="8" width="4" height="6" rx="1" fill="currentColor" opacity=".4"/></svg>
+        看板
+        <span class="nav-badge" id="navProducing">0</span>
       </div>
-      <div class="stat-card amber" onclick="switchKanbanTab('producing')">
-        <div class="stat-icon">⚙️</div>
-        <div class="stat-value" id="statProducing">0</div>
-        <div class="stat-label">生产中</div>
+      <div class="nav-item" onclick="window.location.href='/app'">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        新增订单
       </div>
-      <div class="stat-card green" onclick="switchKanbanTab('done')">
-        <div class="stat-icon">✅</div>
-        <div class="stat-value" id="statDone">0</div>
-        <div class="stat-label">已完成</div>
-      </div>
-      <div class="stat-card" onclick="switchTab('inventory')">
-        <div class="stat-icon">📦</div>
-        <div class="stat-value" id="statInventory">-</div>
-        <div class="stat-label">库存品项</div>
+      <div class="nav-item" id="nav-inventory" onclick="switchPage('inventory',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 4V3a1 1 0 012 0v1M9 4V3a1 1 0 012 0v1" stroke="currentColor" stroke-width="1.2"/></svg>
+        库存
+        <span class="nav-badge" id="navInventory">-</span>
       </div>
     </div>
+    <div class="nav-section">
+      <div class="nav-label">系统</div>
+      <div class="nav-item" id="nav-settings" onclick="switchPage('settings',this)">
+        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M2.9 13.1l1.4-1.4M11.7 4.3l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        设置
+      </div>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="sidebar-avatar">W</div>
+        <div class="sidebar-user-name">Wayne</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Panels -->
-    <div class="panels">
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">仪表盘</div>
+      <div class="topbar-right">
+        <div class="topbar-sync" id="syncTime">--:--:--</div>
+        <div class="topbar-time" id="headerTime">--:--</div>
+      </div>
+    </div>
+    <div class="content">
 
-      <!-- 紧急预警 -->
-      <div class="panel" id="emergencyPanel">
-        <div class="panel-header">
-          <div class="panel-title">🚨 紧急预警</div>
-          <div class="panel-badge" id="urgentBadge">0单</div>
+      <!-- DASHBOARD PAGE -->
+      <div id="dashboardPage" class="page active">
+        <div class="stats-grid">
+          <div class="stat-card" onclick="switchPage('kanban')">
+            <div class="stat-header"><div class="stat-label">全部订单</div></div>
+            <div class="stat-value" id="statTotal">0</div>
+          </div>
+          <div class="stat-card red" onclick="document.getElementById('emergencyList').scrollIntoView({behavior:'smooth'})">
+            <div class="stat-header"><div class="stat-label">紧急</div></div>
+            <div class="stat-value" id="statUrgent">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header"><div class="stat-label">生产中</div></div>
+            <div class="stat-value" id="statProducing">0</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-header"><div class="stat-label">已完成</div></div>
+            <div class="stat-value" id="statDone">0</div>
+          </div>
+          <div class="stat-card" onclick="switchPage('inventory')">
+            <div class="stat-header"><div class="stat-label">库存品项</div></div>
+            <div class="stat-value" id="statInventory">-</div>
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="emergency-list" id="emergencyList">
-            <div class="no-data">暂无紧急订单 👍</div>
+        <div class="panels">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">紧急订单</div>
+              <div class="panel-meta" id="urgentBadge">0单</div>
+            </div>
+            <div class="panel-body">
+              <div id="emergencyList"><div class="empty">暂无紧急订单</div></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">各工序进度</div>
+              <div class="panel-meta" id="stepBadge">-</div>
+            </div>
+            <div class="panel-body" id="stepBody"><div class="empty">加载中...</div></div>
+          </div>
+          <div class="panel panel-full">
+            <div class="panel-header">
+              <div class="panel-title">订单看板</div>
+              <div class="panel-meta" id="kanbanCount">0单</div>
+            </div>
+            <div class="kanban-filters">
+              <button class="kb-tab active" onclick="switchKanbanFilter('all',this)">全部</button>
+              <button class="kb-tab" onclick="switchKanbanFilter('producing',this)">生产中</button>
+              <button class="kb-tab" onclick="switchKanbanFilter('done',this)">已完成</button>
+            </div>
+            <div class="kanban-grid" id="kanbanGrid"><div class="empty">暂无订单</div></div>
           </div>
         </div>
       </div>
 
-      <!-- 生产进度 -->
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">⚙️ 各工序进度</div>
-          <div class="panel-badge" id="stepProgressBadge">-</div>
+      <!-- KANBAN PAGE -->
+      <div id="kanbanPage" class="page">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:15px;font-weight:600">全部订单</div>
+          <div style="font-size:13px;color:var(--text-tertiary)" id="kbPageCount">0单</div>
         </div>
-        <div class="panel-body" id="stepProgressBody">
-          <!-- 动态填充 -->
+        <div class="kanban-filters" style="margin:0 0 12px">
+          <button class="kb-tab active" onclick="switchKanbanFilter('all',this)">全部 <span id="kbAll">0</span></button>
+          <button class="kb-tab" onclick="switchKanbanFilter('producing',this)">生产中 <span id="kbProd">0</span></button>
+          <button class="kb-tab" onclick="switchKanbanFilter('done',this)">已完成 <span id="kbDone">0</span></button>
         </div>
+        <div class="kanban-grid" id="kanbanPageGrid"><div class="empty">暂无订单</div></div>
       </div>
 
-      <!-- 订单看板 -->
-      <div class="panel" style="grid-column:1/-1">
-        <div class="panel-header">
-          <div class="panel-title">📋 订单看板</div>
-          <div class="panel-badge" id="kanbanCount">0单</div>
+      <!-- INVENTORY PAGE -->
+      <div id="inventoryPage" class="page">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:15px;font-weight:600">成品库存</div>
+          <div style="font-size:12px;color:var(--text-tertiary);cursor:pointer" onclick="loadInventory()">刷新</div>
         </div>
-        <div class="kanban-tabs">
-          <div class="kanban-tab active" onclick="switchKanbanTab('all',this)">全部</div>
-          <div class="kanban-tab" onclick="switchKanbanTab('producing',this)">生产中</div>
-          <div class="kanban-tab" onclick="switchKanbanTab('done',this)">已完成</div>
-        </div>
-        <div class="kanban-grid" id="kanbanGrid">
-          <div class="no-data">加载中...</div>
+        <div class="inv-grid" id="invGrid"><div class="empty">加载中...</div></div>
+      </div>
+
+      <!-- SETTINGS PAGE -->
+      <div id="settingsPage" class="page">
+        <div style="font-size:15px;font-weight:600;margin-bottom:12px">设置</div>
+        <div style="background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
+          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">刷新间隔</div><div style="font-size:13px;color:var(--text-tertiary)">30秒</div></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">深色模式</div><div style="font-size:13px;color:var(--text-tertiary)">始终开启</div></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">飞书数据源</div><div style="font-size:13px;color:var(--green)">已连接</div></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 16px"><div style="font-size:13px">版本</div><div style="font-size:13px;color:var(--text-tertiary)">v4.0 - Linear Style</div></div>
         </div>
       </div>
 
     </div>
   </div>
-
-  <!-- ====== 看板 Tab ====== -->
-  <div id="kanbanPage" class="tab-page">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:16px;font-weight:600">📋 全部订单</div>
-      <div style="font-size:13px;color:var(--text-muted)" id="kanbanPageCount">0单</div>
-    </div>
-    <div class="kanban-tabs" style="margin-bottom:0">
-      <div class="kanban-tab active" onclick="switchKanbanTab('all',this)">全部 <span id="kbAll">0</span></div>
-      <div class="kanban-tab" onclick="switchKanbanTab('producing',this)">生产中 <span id="kbProd">0</span></div>
-      <div class="kanban-tab" onclick="switchKanbanTab('done',this)">已完成 <span id="kbDone">0</span></div>
-    </div>
-    <div class="kanban-grid" id="kanbanPageGrid">
-      <div class="no-data">暂无订单</div>
-    </div>
-  </div>
-
-  <!-- ====== 库存 Tab ====== -->
-  <div id="inventoryPage" class="tab-page">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:16px;font-weight:600">📦 成品库存</div>
-      <div style="font-size:13px;color:var(--text-muted);cursor:pointer" onclick="loadInventory()">🔄 刷新</div>
-    </div>
-    <div class="inventory-grid" id="inventoryList">
-      <div class="no-data">加载中...</div>
-    </div>
-  </div>
-
-  <!-- ====== 设置 Tab ====== -->
-  <div id="settingsPage" class="tab-page">
-    <div style="font-size:16px;font-weight:600;margin-bottom:4px">⚙️ 设置</div>
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:14px">刷新间隔</div>
-        <div style="font-size:13px;color:var(--text-muted)">30秒 ✓</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:14px">深色模式</div>
-        <div style="font-size:13px;color:var(--text-muted)">始终开启 ✓</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:14px">系统版本</div>
-        <div style="font-size:13px;color:var(--text-muted)">v3.0 · 2026-04-09</div>
-      </div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:14px">飞书数据源</div>
-        <div style="font-size:13px;color:var(--green)">已连接 ✓</div>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<!-- Bottom Nav -->
-<div class="nav">
-  <button class="nav-item active" onclick="switchTab('dashboard',this)">
-    <div class="nav-icon">📊</div>
-    <div class="nav-label">仪表盘</div>
-  </button>
-  <button class="nav-item" onclick="switchTab('kanban',this)">
-    <div class="nav-icon">📋</div>
-    <div class="nav-label">看板</div>
-  </button>
-  <button class="nav-item" onclick="switchTab('inventory',this)">
-    <div class="nav-icon">📦</div>
-    <div class="nav-label">库存</div>
-  </button>
-  <button class="nav-item" onclick="switchTab('settings',this)">
-    <div class="nav-icon">⚙️</div>
-    <div class="nav-label">设置</div>
-  </button>
 </div>
 
 <!-- Modal -->
@@ -420,7 +326,7 @@ body {
 <div class="modal-content">
 <div class="modal-header">
   <div class="modal-title" id="modalTitle">订单详情</div>
-  <button class="modal-close" onclick="closeModal()">✕</button>
+  <button class="modal-close" onclick="closeModal()">x</button>
 </div>
 <div class="modal-body" id="modalBody"></div>
 </div>
@@ -428,33 +334,22 @@ body {
 
 <script src="shared.js"></script>
 <script>
-// ============================================================
-// 飞书 Bitable 配置
-// ============================================================
 var FS_APP_TOKEN = 'ZXaCbhbaOaUylfsznlRcICJSnMh';
-var FS_APP_ID    = 'cli_a94bdf0fc3b89bb7';
-var FS_APP_SECRET= 'p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
-var FS_PROD_TABLE = 'tblulFnP5TbawnY1';   // 生产管理
-var FS_INV_TABLE  = 'tbljcHJOCAMHfPdx';   // 出入库管理
+var FS_APP_ID = 'cli_a94bdf0fc3b89bb7';
+var FS_APP_SECRET = 'p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
+var FS_PROD_TABLE = 'tblulFnP5TbawnY1';
+var FS_INV_TABLE = 'tbljcHJOCAMHfPdx';
 var fsAccessToken = null;
-
-// ============================================================
-// 全局数据
-// ============================================================
 var orders = [];
 var inventoryData = [];
 var currentKanbanFilter = 'all';
 
-// ============================================================
-// 飞书 API
-// ============================================================
 async function getFeishuToken() {
   if (fsAccessToken) return fsAccessToken;
   try {
     var r = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({app_id: FS_APP_ID, app_secret: FS_APP_SECRET})
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({app_id:FS_APP_ID, app_secret:FS_APP_SECRET})
     });
     var d = await r.json();
     if (d.tenant_access_token) fsAccessToken = d.tenant_access_token;
@@ -468,175 +363,129 @@ async function loadOrders() {
   try {
     var r = await fetch(
       'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_PROD_TABLE + '/records?page_size=100',
-      { headers: {Authorization: 'Bearer ' + token} }
+      { headers:{Authorization:'Bearer '+token} }
     );
     var d = await r.json();
     if (d.data && d.data.items) {
-      orders = d.data.items.map(parseOrderRecord).filter(Boolean);
+      orders = d.data.items.map(function(item) {
+        var f = item.fields;
+        var orderNum = f['生产单'] || '';
+        var linkOrder = f['关联订单'];
+        var orderNumber = (linkOrder && linkOrder.text) ? linkOrder.text : orderNum;
+        var currentStep = f['当前工序'] || '接单';
+        var estDate = f['预计完成日期'];
+        var estStr = estDate ? new Date(estDate).toISOString().split('T')[0] : '';
+        var today = new Date().toISOString().split('T')[0];
+        var daysLeft = estStr ? Math.ceil((new Date(estStr) - new Date(today)) / 86400000) : null;
+        var isUrgent = daysLeft !== null && daysLeft <= 3 && daysLeft >= 0;
+        var isCompleted = !!(f['完工入库']);
+        var qty = parseInt(f['数量(G)']) || 0;
+        var steps = getStepsForOrder({currentStep: currentStep});
+        var stepIdx = steps.indexOf(currentStep);
+        var progress = steps.length > 0 ? Math.round(((stepIdx + 1) / steps.length) * 100) : 0;
+        var linkProducts = f['关联产品'];
+        var productName = (linkProducts && linkProducts.text) ? linkProducts.text : (f['关联产品'] || '');
+        return {
+          id: item.record_id,
+          orderNumber: orderNumber,
+          productName: productName,
+          currentStep: currentStep,
+          estimatedDate: estStr,
+          daysLeft: daysLeft,
+          isUrgent: isUrgent,
+          isCompleted: isCompleted,
+          quantityG: qty,
+          progress: progress,
+          steps: steps
+        };
+      }).filter(Boolean);
       renderAll();
     }
-  } catch(e) { console.error('loadOrders失败', e); }
+  } catch(e) { console.error(e); }
   updateSyncTime();
 }
 
-function parseOrderRecord(item) {
-  var f = item.fields;
-  var orderNum = f['生产单'] || '';
-  var linkOrder = f['关联订单'];
-  var orderNumber = (linkOrder && linkOrder.text) ? linkOrder.text : orderNum;
-  var currentStep = f['当前工序'] || '接单';
-  var estDate = f['预计完成日期'];
-  var estStr = estDate ? new Date(estDate).toISOString().split('T')[0] : '';
-  var today = new Date().toISOString().split('T')[0];
-  var daysLeft = estStr ? Math.ceil((new Date(estStr) - new Date(today)) / 86400000) : null;
-  var isUrgent = daysLeft !== null && daysLeft <= 3 && daysLeft >= 0;
-  var isCompleted = !!(f['完工入库']);
-  var qty = parseInt(f['数量(G)']) || 0;
-  var steps = getStepsForOrder({currentStep: currentStep});
-  var stepIdx = steps.indexOf(currentStep);
-  var progress = steps.length > 0 ? Math.round(((stepIdx + 1) / steps.length) * 100) : 0;
-  var linkProducts = f['关联产品'];
-  var productName = (linkProducts && linkProducts.text) ? linkProducts.text : (f['关联产品'] || '');
-  return {
-    id: item.record_id,
-    orderNumber: orderNumber,
-    productName: productName,
-    currentStep: currentStep,
-    estimatedDate: estStr,
-    daysLeft: daysLeft,
-    isUrgent: isUrgent,
-    isCompleted: isCompleted,
-    quantityG: qty,
-    progress: progress,
-    steps: steps
-  };
-}
-
-// ============================================================
-// 渲染
-// ============================================================
 function renderAll() {
-  renderStats();
-  renderEmergency();
-  renderStepProgress();
+  var urgent = orders.filter(function(o){ return o.isUrgent && !o.isCompleted });
+  var producing = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单' });
+  var done = orders.filter(function(o){ return o.isCompleted });
+  document.getElementById('statTotal').textContent = orders.length;
+  document.getElementById('statUrgent').textContent = urgent.length;
+  document.getElementById('statProducing').textContent = producing.length;
+  document.getElementById('statDone').textContent = done.length;
+  document.getElementById('navTotal').textContent = orders.length;
+  document.getElementById('navProducing').textContent = producing.length;
+  document.getElementById('urgentBadge').textContent = urgent.length + '单';
+  document.getElementById('kbAll').textContent = orders.length;
+  document.getElementById('kbProd').textContent = producing.length;
+  document.getElementById('kbDone').textContent = done.length;
+  renderEmergency(urgent);
+  renderStepProgress(producing);
   renderKanban('kanbanGrid');
   document.getElementById('kanbanCount').textContent = orders.length + '单';
 }
 
-function renderStats() {
-  var urgent = orders.filter(function(o){ return o.isUrgent && !o.isCompleted }).length;
-  var producing = orders.filter(function(o){ return !o.isCompleted && !o.isPaused && o.currentStep !== '接单' }).length;
-  var done = orders.filter(function(o){ return o.isCompleted }).length;
-  document.getElementById('statTotal').textContent = orders.length;
-  document.getElementById('statUrgent').textContent = urgent;
-  document.getElementById('statProducing').textContent = producing;
-  document.getElementById('statDone').textContent = done;
-  document.getElementById('kbAll').textContent = orders.length;
-  document.getElementById('kbProd').textContent = producing;
-  document.getElementById('kbDone').textContent = done;
-}
-
-function renderEmergency() {
-  var urgent = orders.filter(function(o){ return o.isUrgent && !o.isCompleted });
-  var badge = document.getElementById('urgentBadge');
-  var list = document.getElementById('emergencyList');
-  badge.textContent = urgent.length + '单';
-  if (urgent.length === 0) {
-    list.innerHTML = '<div class="no-data">暂无紧急订单 👍</div>';
-    return;
-  }
+function renderEmergency(urgent) {
+  var container = document.getElementById('emergencyList');
+  if (urgent.length === 0) { container.innerHTML = '<div class="empty">暂无紧急订单</div>'; return; }
   urgent.sort(function(a,b){ return (a.daysLeft||999) - (b.daysLeft||999); });
   var html = '';
   urgent.forEach(function(o) {
     var daysText = o.daysLeft === 0 ? '今天到期' : (o.daysLeft < 0 ? '已逾期' : '剩'+o.daysLeft+'天');
-    var daysClass = o.daysLeft <= 0 ? 'red' : 'amber';
     html += '<div class="emergency-item" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
-    html += '<div class="emergency-icon">🚨</div>';
+    html += '<div class="emergency-dot"></div>';
     html += '<div class="emergency-info">';
     html += '<div class="emergency-code">' + escapeHtml(o.orderNumber) + '</div>';
     html += '<div class="emergency-meta">' + escapeHtml(o.productName) + ' · ' + escapeHtml(o.estimatedDate||'-') + '</div>';
     html += '</div>';
-    html += '<div class="emergency-days" style="color:var(--' + daysClass + ')">' + daysText + '</div>';
+    html += '<div class="emergency-days">' + daysText + '</div>';
     html += '</div>';
   });
-  list.innerHTML = html;
-}
-
-function renderStepProgress() {
-  var allSteps = ['接单','调色','制胚','棍花/片桶','切胚','甩干','筛胚','初检','车钮','抛光','终检','包装','出货'];
-  var container = document.getElementById('stepProgressBody');
-  var counts = {};
-  allSteps.forEach(function(s){ counts[s] = 0; });
-  orders.filter(function(o){ return !o.isCompleted; }).forEach(function(o){
-    var idx = allSteps.indexOf(o.currentStep);
-    if (idx >= 0) counts[allSteps[idx]]++;
-  });
-  var total = orders.filter(function(o){ return !o.isCompleted; }).length || 1;
-  var html = '';
-  // 只显示有订单的工序
-  allSteps.filter(function(s){ return counts[s] > 0; }).forEach(function(s){
-    var pct = Math.round((counts[s] / total) * 100);
-    html += '<div class="progress-section">';
-    html += '<div class="progress-label"><span>' + s + '</span><span>' + counts[s] + '单</span></div>';
-    html += '<div class="progress-bar"><div class="progress-fill blue" style="width:' + pct + '%"></div></div>';
-    html += '</div>';
-  });
-  if (!html) html = '<div class="no-data">暂无进行中订单</div>';
   container.innerHTML = html;
-  document.getElementById('stepProgressBadge').textContent = total + '单进行中';
 }
 
-function switchKanbanTab(filter, el) {
+function renderStepProgress(producing) {
+  var allSteps = ['接单','调色','制胚','棍花/片桶','切胚','甩干','筛胚','初检','车钮','抛光','终检','包装','出货'];
+  var counts = {}; allSteps.forEach(function(s){ counts[s] = 0; });
+  producing.forEach(function(o){ var idx = allSteps.indexOf(o.currentStep); if(idx>=0) counts[allSteps[idx]]++; });
+  var total = producing.length || 1;
+  var active = allSteps.filter(function(s){ return counts[s] > 0; });
+  document.getElementById('stepBadge').textContent = total + '单进行中';
+  if (active.length === 0) { document.getElementById('stepBody').innerHTML = '<div class="empty">暂无进行中订单</div>'; return; }
+  var html = '<div class="step-list">';
+  active.forEach(function(s){ var pct = Math.round((counts[s]/total)*100); html += '<div class="step-row"><div class="step-name">'+s+'</div><div class="step-bar"><div class="step-fill" style="width:'+pct+'%"></div></div><div class="step-count">'+counts[s]+'</div></div>'; });
+  html += '</div>';
+  document.getElementById('stepBody').innerHTML = html;
+}
+
+function switchKanbanFilter(filter, el) {
   currentKanbanFilter = filter;
-  if (el) {
-    document.querySelectorAll('.kanban-tab').forEach(function(t){ t.classList.remove('active'); });
-    el.classList.add('active');
-  }
+  if (el) { document.querySelectorAll('.kb-tab').forEach(function(t){ t.classList.remove('active'); }); el.classList.add('active'); }
   renderKanban('kanbanGrid');
   renderKanban('kanbanPageGrid', true);
 }
 
-function renderKanban(containerId, showAll) {
+function renderKanban(containerId) {
   var container = document.getElementById(containerId);
   if (!container) return;
   var filtered;
-  if (currentKanbanFilter === 'producing') {
-    filtered = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单'; });
-  } else if (currentKanbanFilter === 'done') {
-    filtered = orders.filter(function(o){ return o.isCompleted; });
-  } else {
-    filtered = orders.filter(function(o){ return !o.isCompleted; });
-  }
-  filtered.sort(function(a,b){
-    if (a.isUrgent && !b.isUrgent) return -1;
-    if (!a.isUrgent && b.isUrgent) return 1;
-    return (a.estimatedDate||'').localeCompare(b.estimatedDate||'');
-  });
-  if (filtered.length === 0) {
-    container.innerHTML = '<div class="no-data">' + (currentKanbanFilter==='done'?'暂无已完成订单':'暂无订单') + '</div>';
-    return;
-  }
+  if (currentKanbanFilter === 'producing') filtered = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单'; });
+  else if (currentKanbanFilter === 'done') filtered = orders.filter(function(o){ return o.isCompleted; });
+  else filtered = orders.filter(function(o){ return !o.isCompleted; });
+  filtered.sort(function(a,b){ if(a.isUrgent&&!b.isUrgent) return -1; if(!a.isUrgent&&b.isUrgent) return 1; return (a.estimatedDate||'').localeCompare(b.estimatedDate||''); });
+  if (filtered.length === 0) { container.innerHTML = '<div class="empty">' + (currentKanbanFilter==='done'?'暂无已完成订单':'暂无订单') + '</div>'; return; }
   var html = '';
   filtered.forEach(function(o) {
-    var color = o.isUrgent ? 'red' : (o.isCompleted ? 'green' : 'amber');
-    var statusLabel = o.isCompleted ? '已完成' : o.currentStep;
-    html += '<div class="order-card ' + color + '" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
-    html += '<div class="order-card-top">';
-    html += '<div class="order-num">' + escapeHtml(o.orderNumber) + '</div>';
-    html += '<div class="order-status ' + color + '">' + statusLabel + '</div>';
-    html += '</div>';
-    html += '<div class="order-customer">' + escapeHtml(o.productName) + '</div>';
-    html += '<div class="order-meta">';
-    html += '<span>' + escapeHtml(o.estimatedDate||'-') + '</span>';
-    html += '<span>' + o.progress + '%</span>';
-    html += '</div>';
-    html += '<div class="order-progress"><div class="order-progress-fill" style="width:' + o.progress + '%"></div></div>';
+    var statusClass = o.isUrgent ? 'urgent' : (o.isCompleted ? 'done' : 'producing');
+    var statusText = o.isCompleted ? '已完成' : o.currentStep;
+    html += '<div class="kb-card" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
+    html += '<div class="kb-top"><div class="kb-num">' + escapeHtml(o.orderNumber) + '</div><div class="kb-status ' + statusClass + '">' + statusText + '</div></div>';
+    html += '<div class="kb-customer">' + escapeHtml(o.productName) + '</div>';
+    html += '<div class="kb-meta"><div class="kb-progress"><div class="progress-bar"><div class="progress-fill" style="width:' + o.progress + '%"></div></div></div><div class="kb-date">' + escapeHtml(o.estimatedDate||'-') + '</div></div>';
     html += '</div>';
   });
   container.innerHTML = html;
-  if (containerId === 'kanbanPageGrid') {
-    document.getElementById('kanbanPageCount').textContent = filtered.length + '单';
-  }
+  if (containerId === 'kanbanPageGrid') document.getElementById('kbPageCount').textContent = filtered.length + '单';
 }
 
 function showDetail(orderNum) {
@@ -645,11 +494,14 @@ function showDetail(orderNum) {
   document.getElementById('modalTitle').textContent = escapeHtml(o.orderNumber);
   var body = '';
   body += '<div class="detail-row"><div class="detail-label">产品</div><div class="detail-value">' + escapeHtml(o.productName||'-') + '</div></div>';
-  body += '<div class="detail-row"><div class="detail-label">当前工序</div><div class="detail-value' + (o.isUrgent?' red':'') + '">' + escapeHtml(o.currentStep) + '</div></div>';
+  var urgentStyle = o.isUrgent ? ' style="color:var(--red)"' : '';
+  body += '<div class="detail-row"><div class="detail-label">当前工序</div><div class="detail-value' + urgentStyle + '">' + escapeHtml(o.currentStep) + '</div></div>';
   body += '<div class="detail-row"><div class="detail-label">完成进度</div><div class="detail-value">' + o.progress + '%</div></div>';
-  body += '<div class="detail-row"><div class="detail-label">交货日期</div><div class="detail-value' + (o.isUrgent?' red':'') + '">' + escapeHtml(o.estimatedDate||'-') + (o.isUrgent?' ⚠️':'') + '</div></div>';
+  body += '<div class="detail-row"><div class="detail-label">交货日期</div><div class="detail-value' + urgentStyle + '">' + escapeHtml(o.estimatedDate||'-') + '</div></div>';
   body += '<div class="detail-row"><div class="detail-label">数量</div><div class="detail-value">' + o.quantityG + 'G</div></div>';
-  body += '<div class="detail-row"><div class="detail-label">状态</div><div class="detail-value' + (o.isCompleted?' green':(o.isUrgent?' red':'')) + '">' + (o.isCompleted?'已完成':(o.isUrgent?'紧急':'生产中')) + '</div></div>';
+  var statusStyle = o.isCompleted ? ' style="color:var(--green)"' : urgentStyle;
+  var statusText = o.isCompleted ? '已完成' : (o.isUrgent ? '紧急' : '生产中');
+  body += '<div class="detail-row"><div class="detail-label">状态</div><div class="detail-value' + statusStyle + '">' + statusText + '</div></div>';
   document.getElementById('modalBody').innerHTML = body;
   document.getElementById('orderModal').classList.add('show');
 }
@@ -658,20 +510,17 @@ function closeModal() {
   document.getElementById('orderModal').classList.remove('show');
 }
 
-// ============================================================
-// 库存
-// ============================================================
+// INVENTORY
 async function loadInventory() {
   var token = await getFeishuToken();
   if (!token) return;
   try {
     var r = await fetch(
-      'https://openfeishu/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_INV_TABLE + '/records?page_size=100',
-      { headers: {Authorization: 'Bearer ' + token} }
+      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_INV_TABLE + '/records?page_size=100',
+      { headers:{Authorization:'Bearer '+token} }
     );
     var d = await r.json();
     if (d.data && d.data.items) {
-      // 按产品聚合最新库存
       var latest = {};
       d.data.items.forEach(function(item) {
         var f = item.fields;
@@ -682,42 +531,42 @@ async function loadInventory() {
         var warehouse = f['仓库'] || '-';
         var time = f['操作时间'] ? new Date(f['操作时间']).toLocaleString('zh-CN') : '-';
         var key = name + '_' + warehouse;
-        if (!latest[key] || (time > latest[key].time)) {
-          latest[key] = {name: name, num: num, stock: stock, warehouse: warehouse, time: time};
-        }
+        if (!latest[key] || (time > latest[key].time)) latest[key] = {name:name, num:num, stock:stock, warehouse:warehouse, time:time};
       });
       inventoryData = Object.values(latest);
+      document.getElementById('navInventory').textContent = inventoryData.length;
+      document.getElementById('statInventory').textContent = inventoryData.length;
       renderInventory();
     }
-  } catch(e) { console.error('loadInventory失败', e); }
+  } catch(e) { console.error(e); }
 }
 
 function renderInventory() {
-  var container = document.getElementById('inventoryList');
-  document.getElementById('statInventory').textContent = inventoryData.length;
-  if (inventoryData.length === 0) {
-    container.innerHTML = '<div class="no-data">暂无库存数据</div>';
-    return;
-  }
+  var container = document.getElementById('invGrid');
+  if (inventoryData.length === 0) { container.innerHTML = '<div class="empty">暂无库存数据</div>'; return; }
   var html = '';
   inventoryData.forEach(function(item) {
-    var color = item.stock > 20 ? 'green' : (item.stock > 5 ? 'amber' : 'red');
-    html += '<div class="inventory-item">';
-    html += '<div class="inv-top">';
-    html += '<div class="inv-name">' + escapeHtml(item.name) + '</div>';
-    html += '<div class="inv-stock ' + color + '">' + item.stock + '</div>';
-    html += '</div>';
+    var level = item.stock > 20 ? 'ok' : (item.stock > 5 ? 'warn' : 'low');
+    html += '<div class="inv-card">';
+    html += '<div class="inv-top"><div class="inv-name">' + escapeHtml(item.name) + '</div><div class="inv-stock ' + level + '">' + item.stock + '</div></div>';
     html += '<div class="inv-num">编号: ' + escapeHtml(item.num) + '</div>';
     html += '<div class="inv-num">仓库: ' + escapeHtml(item.warehouse) + '</div>';
-    html += '<div class="inv-num" style="margin-top:4px;font-size:11px">' + item.time + '</div>';
     html += '</div>';
   });
   container.innerHTML = html;
 }
 
-// ============================================================
-// 工具函数
-// ============================================================
+function switchPage(page, el) {
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var titles = {dashboard:'仪表盘', kanban:'看板', inventory:'库存', settings:'设置'};
+  document.getElementById('topbarTitle').textContent = titles[page] || page;
+  document.getElementById(page + 'Page').classList.add('active');
+  if (page === 'kanban') renderKanban('kanbanPageGrid');
+  if (page === 'inventory') loadInventory();
+}
+
 function escapeHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -726,42 +575,15 @@ function escapeHtml(str) {
 function pad(n) { return n < 10 ? '0' + n : n; }
 
 function updateTime() {
-  var now = new Date(), w = ['日','一','二','三','四','五','六'];
+  var now = new Date();
   document.getElementById('headerTime').textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+  document.getElementById('syncTime').textContent = '同步 ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
 }
 setInterval(updateTime, 1000);
 updateTime();
 
-function updateSyncTime() {
-  var now = new Date();
-  document.getElementById('syncTime').textContent = '同步 ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-}
-
-function switchTab(tab, el) {
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  if (el) el.classList.add('active');
-  document.querySelectorAll('.tab-page').forEach(function(p){ p.classList.remove('active'); });
-  if (tab === 'dashboard') {
-    document.getElementById('dashboardPage').classList.add('active');
-  } else if (tab === 'kanban') {
-    document.getElementById('kanbanPage').classList.add('active');
-    renderKanban('kanbanPageGrid', true);
-  } else if (tab === 'inventory') {
-    document.getElementById('inventoryPage').classList.add('active');
-    loadInventory();
-  } else if (tab === 'settings') {
-    document.getElementById('settingsPage').classList.add('active');
-  }
-}
-
-function scrollToEmergency() {
-  document.getElementById('emergencyPanel').scrollIntoView({behavior: 'smooth'});
-}
-
-// ============================================================
-// 初始化
-// ============================================================
 loadOrders();
+loadInventory();
 setInterval(loadOrders, 30000);
 </script>
 </body>
