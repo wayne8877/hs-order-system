@@ -280,18 +280,13 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:#0d0d0d;c
 </div>
 
 <!-- 库存Tab -->
-<div id="inventoryPage" class="tab-content">
-<div class="tab-empty" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:60px 20px;text-align:center">
-<div style="font-size:56px;margin-bottom:16px">📦</div>
-<div class="tab-empty-title" style="font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:8px">库存模块待接入</div>
-<div class="tab-empty-text" style="font-size:15px;line-height:1.8">
-Wayne 正在配置飞书表格<br>
-库存、入库、出库、预警一旦接通<br>
-数据将实时展示在此处
+<div id="inventoryPage" class="tab-content" style="padding:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+  <div style="font-size:18px;font-weight:600;color:#fff">📦 成品库存</div>
+  <div style="font-size:13px;color:rgba(255,255,255,0.4);cursor:pointer" onclick="loadInventory()">🔄 刷新</div>
 </div>
-<div style="margin-top:24px;padding:12px 24px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;display:inline-block">
-<div style="font-size:13px;color:#f59e0b;font-weight:600">⏳ 等待飞书数据接入</div>
-</div>
+<div id="inventoryList">
+  <div style="text-align:center;padding:60px;color:rgba(255,255,255,0.4)">加载中...</div>
 </div>
 </div>
 
@@ -334,12 +329,93 @@ Wayne 正在配置飞书表格<br>
 
 <script src="shared.js"></script>
 <script>
+// 飞书Bitable配置
+var FS_APP_TOKEN='ZXaCbhbaOaUylfsznlRcICJSnMh';
+var FS_APP_ID='cli_a94bdf0fc3b89bb7';
+var FS_APP_SECRET='p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
+var FS_BTABLE_ID='tbljcHJOCAMHfPdx';
+var fsAccessToken=null;
+
 var orders=[];
+var inventoryData=[];
 var selectedDate=null;
 var calMonth=null;
 var lastScrollTime=0;
 var currentFilter='all';
 var searchText='';
+
+// 获取飞书访问令牌
+async function getFeishuToken(){
+  if(fsAccessToken) return fsAccessToken;
+  try{
+    var r=await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({app_id:FS_APP_ID,app_secret:FS_APP_SECRET})
+    });
+    var d=await r.json();
+    if(d.tenant_access_token) fsAccessToken=d.tenant_access_token;
+  }catch(e){}
+  return fsAccessToken;
+}
+
+// 加载库存数据
+async function loadInventory(){
+  var token=await getFeishuToken();
+  if(!token) return;
+  try{
+    var r=await fetch('https://open.feishu.cn/open-apis/bitable/v1/apps/'+FS_APP_TOKEN+'/tables/'+FS_BTABLE_ID+'/records?page_size=100',{
+      headers:{Authorization:'Bearer '+token}
+    });
+    var d=await r.json();
+    if(d.data&&d.data.items){
+      inventoryData=d.data.items.map(function(item){
+        var f=item.fields;
+        return {
+          name:f['产品名称']||'-',
+          num:f['产品编号']?(Array.isArray(f['产品编号'])?f['产品编号'][0].text:f['产品编号']):'-',
+          stock:typeof f['当前库存']==='number'?f['当前库存']:0,
+          warehouse:f['仓库']||'-',
+          op:f['操作']||'-',
+          time:f['操作时间']?new Date(f['操作时间']).toLocaleString('zh-CN'):'-'
+        };
+      });
+      renderInventory();
+    }
+  }catch(e){console.error('库存加载失败',e)}
+}
+
+// 渲染库存列表
+function renderInventory(){
+  var el=document.getElementById('inventoryList');
+  if(!el) return;
+  if(inventoryData.length===0){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4)">暂无库存数据</div>';
+    return;
+  }
+  // 按产品分组，保留最新一条
+  var latest={};
+  inventoryData.forEach(function(item){
+    var key=item.name+'_'+(item.warehouse||'');
+    if(!latest[key]||(item.time>latest[key].time)) latest[key]=item;
+  });
+  var list=Object.values(latest);
+  var html='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;padding:4px">';
+  list.forEach(function(item){
+    var color=item.stock>0?'#22c55e':'#dc2626';
+    html+='<div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-size:16px;font-weight:600;color:#fff">'+escapeHtml(item.name)+'</div>
+        <div style="font-size:28px;font-weight:700;color:'+color+'">'+item.stock+'</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:6px">编号: '+escapeHtml(item.num)+'</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:6px">仓库: '+escapeHtml(item.warehouse)+'</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.3)">'+item.time+'</div>
+    </div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
 
 function pad(n){return n<10?'0'+n:n}
 
@@ -368,6 +444,7 @@ function switchTab(tab, el){
     renderOrderPage();
   } else if(tab==='inventory'){
     document.getElementById('inventoryPage').classList.add('active');
+    loadInventory();
   } else if(tab==='settings'){
     document.getElementById('settingsPage').classList.add('active');
   }
