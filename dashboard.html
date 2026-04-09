@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>合盛智能跟单中心</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:#0d0d0d;color:#fff;height:100vh;display:flex;flex-direction:column}
+.main{flex:1;padding:20px;overflow-y:auto;display:flex;flex-direction:column;gap:20px}
+.header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:16px}
+.header-title{font-size:24px;font-weight:700;color:#fff;letter-spacing:1px}
+.header-time{font-size:40px;font-weight:200;color:#fff;font-family:'Helvetica Neue',sans-serif}
+.header-date{font-size:14px;color:rgba(255,255,255,0.4);margin-top:4px}
+.stat-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.stat-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;text-align:center}
+.stat-value{font-size:44px;font-weight:700;color:#fff;line-height:1}
+.stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:8px;text-transform:uppercase;letter-spacing:1px}
+.stat-card.urgent .stat-value{color:#dc2626}
+.stat-card.producing .stat-value{color:#f59e0b}
+.stat-card.complete .stat-value{color:#16a34a}
+.urgent-banner{display:none;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.25);border-radius:12px;padding:16px 20px}
+.urgent-banner.show{display:block}
+.urgent-title{font-size:14px;color:#dc2626;font-weight:600;margin-bottom:10px}
+.urgent-items{display:flex;flex-wrap:wrap;gap:10px}
+.urgent-item{background:rgba(220,38,38,0.2);border-radius:8px;padding:10px 16px;cursor:pointer}
+.urgent-item:hover{background:rgba(220,38,38,0.3)}
+.urgent-code{font-size:16px;font-weight:600;color:#fff}
+.urgent-info{font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0}
+.panel{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:20px;display:flex;flex-direction:column}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.panel-title{font-size:17px;font-weight:600;color:#fff}
+.panel-action{font-size:14px;color:rgba(255,255,255,0.4);cursor:pointer}
+.panel-action:hover{color:#fff}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.cal-header{text-align:center;font-size:14px;color:rgba(255,255,255,0.4);padding:8px 0;font-weight:500}
+.cal-day{background:rgba(255,255,255,0.03);border-radius:10px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.cal-day:hover{background:rgba(255,255,255,0.08)}
+.cal-day.other{opacity:0.3}
+.cal-day.today{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2)}
+.cal-day.selected{border:2px solid #fff}
+.cal-day.has-data{background:rgba(34,197,94,0.15)}
+.cal-day-num{font-size:17px;font-weight:500;color:rgba(255,255,255,0.8)}
+.cal-day-count{font-size:12px;color:#22c55e;font-weight:600;margin-top:2px}
+.list-wrap{flex:1;overflow-y:auto}
+.list-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:rgba(255,255,255,0.02)}
+.list-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-right:14px;flex-shrink:0}
+.list-name{font-size:16px;font-weight:600;color:#fff}
+.list-sub{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
+.list-right{text-align:right;margin-left:auto}
+.list-date{font-size:17px;color:rgba(255,255,255,0.6)}
+.list-step{font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px}
+.empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,0.3);font-size:17px}
+.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:16px}
+.week-item{background:rgba(255,255,255,0.03);border-radius:10px;padding:12px 8px;text-align:center}
+.week-item.today{background:rgba(255,255,255,0.1)}
+.week-label{font-size:13px;color:rgba(255,255,255,0.4)}
+.week-count{font-size:28px;font-weight:700;color:rgba(255,255,255,0.8);margin-top:6px}
+.week-count.has{color:#22c55e}
+.week-date{font-size:12px;color:rgba(255,255,255,0.3);margin-top:4px}
+
+/* 订单页 */
+.order-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.order-stat{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;text-align:center}
+.order-stat-value{font-size:32px;font-weight:700;color:#fff}
+.order-stat-label{font-size:12px;color:rgba(255,255,255,0.4);margin-top:4px;text-transform:uppercase}
+.order-stat.urgent .order-stat-value{color:#dc2626}
+.order-stat.producing .order-stat-value{color:#f59e0b}
+.order-stat.complete .order-stat-value{color:#16a34a}
+.search-wrap{display:flex;gap:12px;margin-bottom:16px}
+.search-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 16px;color:#fff;font-size:16px;outline:none}
+.search-input:focus{border-color:rgba(255,255,255,0.3)}
+.search-input::placeholder{color:rgba(255,255,255,0.3)}
+.btn-export{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#22c55e;border-radius:10px;padding:12px 20px;font-size:17px;cursor:pointer;white-space:nowrap}
+.btn-export:hover{background:rgba(34,197,94,0.25)}
+.filter-wrap{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:8px 16px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:14px;cursor:pointer}
+.filter-btn:hover{background:rgba(255,255,255,0.1)}
+.filter-btn.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff}
+.order-list{flex:1;overflow-y:auto}
+.order-card{display:flex;align-items:center;padding:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s}
+.order-card:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12)}
+.order-card-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-right:14px;flex-shrink:0}
+.order-card-info{flex:1;min-width:0}
+.order-card-num{font-size:17px;font-weight:600;color:#fff}
+.order-card-customer{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.order-card-progress{height:3px;background:rgba(255,255,255,0.1);border-radius:2px;margin-top:8px}
+.order-card-progress-fill{height:100%;background:rgba(255,255,255,0.4);border-radius:2px;transition:width .3s}
+.order-card-right{text-align:right;margin-left:16px;flex-shrink:0}
+.order-card-status{font-size:17px;font-weight:500;color:rgba(255,255,255,0.6)}
+.order-card-status.red{color:#dc2626}
+.order-card-status.green{color:#16a34a}
+.order-card-status.orange{color:#f59e0b}
+.order-card-step{font-size:13px;color:rgba(255,255,255,0.4);margin-top:4px}
+.order-card-date{font-size:13px;color:rgba(255,255,255,0.3);margin-top:6px}
+.customer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;padding:0 4px}
+.customer-stat{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 4px;text-align:center}
+.customer-stat-value{font-size:26px;font-weight:700;color:#fff}
+.customer-stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px}
+.customer-list-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.customer-rank{width:28px;height:28px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-right:12px;flex-shrink:0}
+.customer-rank.top1{background:#fbbf24;color:#000}
+.customer-rank.top2{background:#d1d5db;color:#000}
+.customer-rank.top3{background:#cd7c2d;color:#fff}
+.customer-g-total{font-size:16px;color:#22c55e;font-weight:600}
+.customer-detail-header{display:flex;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:16px}
+.customer-back{cursor:pointer;margin-right:12px;font-size:24px}
+.customer-detail-name{font-size:16px;font-weight:600;color:#fff}
+.g-class-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+.g-class-item{background:rgba(255,255,255,0.05);border-radius:10px;padding:12px;text-align:center}
+.g-class-label{font-size:13px;color:rgba(255,255,255,0.5)}
+.g-class-count{font-size:22px;font-weight:700;color:#fff;margin-top:4px}
+.g-class-item.highlight{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3)}
+
+/* 客户排序页 */
+.customer-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;padding:0 4px}
+.customer-stat{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 4px;text-align:center}
+.customer-stat-value{font-size:26px;font-weight:700;color:#fff}
+.customer-stat-label{font-size:13px;color:rgba(255,255,255,0.4);margin-top:6px}
+.customer-list-item{display:flex;align-items:center;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer}
+.customer-list-item:hover{background:rgba(255,255,255,0.02)}
+.customer-rank{width:28px;height:28px;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-right:12px;flex-shrink:0}
+.customer-rank.top1{background:#fbbf24;color:#000}
+.customer-rank.top2{background:#d1d5db;color:#000}
+.customer-rank.top3{background:#cd7c2d;color:#fff}
+.customer-info{flex:1}
+.customer-name{font-size:16px;font-weight:600;color:#fff}
+.customer-order-count{font-size:14px;color:rgba(255,255,255,0.5);margin-top:2px}
+.customer-g-total{font-size:16px;color:#22c55e;font-weight:600}
+
+/* 客户详情页 */
+.customer-detail-header{display:flex;align-items:center;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:16px}
+.customer-back{cursor:pointer;margin-right:12px;font-size:24px}
+.customer-detail-name{font-size:16px;font-weight:600;color:#fff}
+.g-class-wrap{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+.g-class-item{background:rgba(255,255,255,0.05);border-radius:10px;padding:12px;text-align:center}
+.g-class-label{font-size:13px;color:rgba(255,255,255,0.5)}
+.g-class-count{font-size:22px;font-weight:700;color:#fff;margin-top:4px}
+.g-class-item.highlight{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3)}
+
+
+/* 弹窗 */
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.show{display:flex}
+.modal-content{background:#141414;border:1px solid rgba(255,255,255,0.1);border-radius:16px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+.modal-header{padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:17px;font-weight:600;color:#fff}
+.modal-close{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.05);border:none;color:#fff;cursor:pointer;font-size:18px}
+.modal-close:hover{background:rgba(255,255,255,0.1)}
+.modal-body{padding:24px}
+.detail-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.detail-row:last-child{border-bottom:none}
+.detail-label{font-size:17px;color:rgba(255,255,255,0.5)}
+.detail-value{font-size:16px;color:#fff;font-weight:500;text-align:right;max-width:60%}
+.detail-value.red{color:#dc2626}
+.detail-value.green{color:#16a34a}
+.detail-value.orange{color:#f59e0b}
+
+/* 底部导航 */
+.nav{display:fixed;bottom:0;left:0;right:0;background:rgba(20,20,20,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.08);display:flex;z-index:100}
+.nav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;padding:12px 0;border:none;background:none;color:rgba(255,255,255,0.4);transition:all .2s}
+.nav-item:hover{color:rgba(255,255,255,0.7)}
+.nav-item.active{color:#fff}
+.nav-label{font-size:17px;font-weight:600}
+
+/* 其他Tab */
+.tab-content{display:none;flex-direction:column;gap:16px}
+.tab-content.active{display:flex}
+.tab-empty{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:16px;padding:60px 20px;text-align:center}
+.tab-empty-title{font-size:16px;color:rgba(255,255,255,0.6);margin-bottom:8px}
+.tab-empty-text{font-size:17px;color:rgba(255,255,255,0.3)}
+
+@media(max-width:900px){
+.grid-2{grid-template-columns:1fr}
+.stat-row{grid-template-columns:repeat(3,1fr)}
+.order-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+.main{padding:12px 12px 80px 12px;gap:12px}
+.stat-row{grid-template-columns:repeat(2,1fr);gap:8px}
+.stat-card{padding:14px}
+.stat-value{font-size:32px}
+.order-stats{grid-template-columns:repeat(2,1fr);gap:8px}
+.order-stat-value{font-size:22px}
+.search-wrap{flex-direction:column}
+.btn-export{text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="header">
+<div>
+<div class="header-title">合盛智能跟单中心</div><div onclick="loadOrders()" style="position:absolute;right:16px;top:16px;font-size:14px;color:rgba(255,255,255,0.6);cursor:pointer">刷新</div>
+<div class="header-date" id="headerDate">2024/1/1</div>
+
+
+</div>
+<div class="header-time" id="headerTime">00:00</div>
+</div>
+
+<div class="main">
+<!-- 首页 -->
+<div id="homePage" class="tab-content active">
+<div class="stat-row">
+<div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">今日交货</div></div>
+<div class="stat-card urgent"><div class="stat-value" id="statUrgent">0</div><div class="stat-label">紧急</div></div>
+<div class="stat-card"><div class="stat-value" id="statPending">0</div><div class="stat-label">待生产</div></div>
+<div class="stat-card producing"><div class="stat-value" id="statProducing">0</div><div class="stat-label">生产中</div></div>
+<div class="stat-card complete"><div class="stat-value" id="statComplete">0</div><div class="stat-label">已完成</div></div>
+</div>
+
+<div class="urgent-banner" id="urgentBanner">
+<div class="urgent-title">急单预警</div>
+<div class="urgent-items" id="urgentItems"></div>
+</div>
+
+<div class="grid-2">
+<div class="panel">
+<div class="panel-header">
+<div class="panel-title" id="calTitle">2024年4月</div>
+<div class="panel-action" id="calPrev" onclick="prevMonth()">上月</div>
+</div>
+<div class="cal-grid" id="calGrid"></div>
+<div class="week-row" id="weekRow"></div>
+</div>
+
+<div class="panel">
+<div class="panel-header">
+<div class="panel-title" id="customerRankTitle">客户排序</div>
+        <div class="panel-action" id="customerRankCount"></div>
+        <div class="list-wrap" id="customerRankList"><div class="empty">点击查看客户排名</div></div>
+        </div>
+        <div class="panel">
+        <div class="panel-title" id="listTitle">今日交货</div>
+<div class="panel-action" id="listCount">0单</div>
+</div>
+<div class="list-wrap" id="customerRankList"><div class="empty">点击查看客户排名</div></div>
+</div>
+<div class="panel">
+    <div class="panel-title" id="customerRankTitle">客户排序</div>
+        <div class="panel-action" id="customerRankCount"></div>
+        <div class="list-wrap" id="customerRankList"><div class="empty">点击查看客户排名</div></div>
+        </div>
+        <div class="panel">
+        <div class="panel-title" id="listTitle">今日交货</div>
+    <div class="panel-action" id="listCount">0单</div>
+    <div class="list-wrap" id="todayList"><div class="empty">加载中...</div></div>
+</div>
+</div>
+</div>
+
+<!-- 订单页 -->
+<div id="ordersPage" class="tab-content">
+<div class="order-stats">
+<div class="order-stat"><div class="order-stat-value" id="orderTotal">0</div><div class="order-stat-label">全部订单</div></div>
+<div class="order-stat urgent"><div class="order-stat-value" id="orderUrgent">0</div><div class="order-stat-label">紧急</div></div>
+<div class="order-stat producing"><div class="order-stat-value" id="orderProducing">0</div><div class="order-stat-label">生产中</div></div>
+<div class="order-stat complete"><div class="order-stat-value" id="orderComplete">0</div><div class="order-stat-label">已完成</div></div>
+</div>
+
+<div class="search-wrap">
+<input type="text" class="search-input" id="searchInput" placeholder="搜索订单号、客户名称、产品..." oninput="doFilter()">
+<button class="btn-export" onclick="doExport()">导出CSV</button>
+</div>
+
+<div class="filter-wrap" id="filterWrap" style="overflow-x:auto;-webkit-overflow-scrolling:touch;flex-wrap:nowrap;padding-bottom:4px">
+<div class="filter-btn active" onclick="setFilter('all')">全部 <span id="fAll">0</span></div>
+<div class="filter-btn" onclick="setFilter('urgent')">紧急 <span id="fUrgent">0</span></div>
+<div class="filter-btn" onclick="setFilter('producing')">生产中 <span id="fProducing">0</span></div>
+<div class="filter-btn" onclick="setFilter('completed')">已完成 <span id="fCompleted">0</span></div>
+        <div class="filter-btn" id="fTabOrders" onclick="switchTab('orders')">订单</div>
+        <div class="filter-btn" id="fTabCustomer" onclick="switchTab('customer')">客户</div>
+</div>
+
+<div class="order-list" id="orderList"><div class="empty">加载中...</div></div>
+</div>
+
+<!-- 其他Tab -->
+<div id="customerPage" class="tab-content" style="overflow-x:hidden">
+    <div class="customer-stats" id="customerStats"></div>
+    <div class="customer-list" id="customerList"><div class="empty">加载中...</div></div>
+    <div class="customer-detail" id="customerDetail" style="display:none"></div>
+</div>
+<div id="otherPage" class="tab-content">
+<div class="tab-empty">
+<div class="tab-empty-title">功能开发中</div>
+<div class="tab-empty-text">该模块正在努力开发中，敬请期待</div>
+</div>
+</div>
+</div>
+
+<div class="nav">
+<button class="nav-item active" onclick="switchTab('home')"><div class="nav-label">首页</div></button>
+<button class="nav-item" onclick="switchTab('orders')"><div class="nav-label">订单</div></button>
+<button class="nav-item" onclick="switchTab('sample')"><div class="nav-label">打样</div></button>
+<button class="nav-item" onclick="switchTab('attendance')"><div class="nav-label">考勤</div></button>
+<button class="nav-item" onclick="switchTab('overtime')"><div class="nav-label">加班</div></button>
+<button class="nav-item" onclick="switchTab('maintenance')"><div class="nav-label">修机</div></button>
+<button class="nav-item" onclick="switchTab('law')"><div class="nav-label">法规</div></button>
+<button class="nav-item" onclick="switchTab('material')"><div class="nav-label">原料</div></button>
+<button class="nav-item" onclick="switchTab('inventory')"><div class="nav-label">库管</div></button>
+</div>
+
+<!-- 弹窗 -->
+<div class="modal" id="orderModal" onclick="if(event.target===this)closeModal()">
+<div class="modal-content">
+<div class="modal-header">
+<div class="modal-title" id="modalTitle">订单详情</div>
+<button class="modal-close" onclick="closeModal()">x</button>
+</div>
+<div class="modal-body" id="modalBody"></div>
+</div>
+</div>
+
+<script>
+var STEPS=['接单','调色','棍花/片桶','切胚','甩干','筛胚','初检','车钮','抛光','终检','包装','出货'];
+var orders=[];
+var selectedDate=null;
+var calMonth=null;
+var lastScrollTime=0;
+var currentFilter='all';
+var searchText='';
+
+function pad(n){return n<10?'0'+n:n}
+
+function updateTime(){
+  var now=new Date(),w=['日','一','二','三','四','五','六'];
+  document.getElementById('headerTime').textContent=pad(now.getHours())+':'+pad(now.getMinutes());
+  document.getElementById('headerDate').textContent=now.getFullYear()+'/'+(now.getMonth()+1)+'/'+now.getDate()+' 星期'+w[now.getDay()];
+}
+setInterval(updateTime,1000);
+updateTime();
+
+function switchTab(tab){
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
+  document.querySelectorAll('.filter-btn').forEach(function(n){n.classList.remove('active')});
+  if(event && event.currentTarget) event.currentTarget.classList.add('active');
+  
+  document.getElementById('homePage').classList.remove('active');
+  document.getElementById('ordersPage').classList.remove('active');
+  document.getElementById('customerPage').classList.remove('active');
+  document.getElementById('otherPage').classList.remove('active');
+  
+  if(tab==='home'){
+    document.getElementById('homePage').classList.add('active');
+  } else if(tab==='orders'){
+    document.getElementById('ordersPage').classList.add('active');
+    renderOrderPage();
+  } else if(tab==='customer'){
+    document.getElementById('customerPage').classList.add('active');
+    renderCustomerPage();
+  } else {
+    document.getElementById('otherPage').classList.add('active');
+  }
+}
+
+async function loadOrders(){
+  try{
+    var r=await fetch('/api/orders');
+    var d=await r.json();
+    if(d.orders){orders=d.orders}
+  } catch(e){}
+  renderHomePage();
+}
+
+function renderHomePage(){
+  var today=new Date().toISOString().split('T')[0];
+  if(!selectedDate) selectedDate=today;
+  if(!calMonth) calMonth=new Date();
+  
+  var dayOrders=orders.filter(function(o){return o.estimatedDate&&o.estimatedDate.startsWith(selectedDate)});
+  var urgent=dayOrders.filter(function(o){return o.isUrgent}).length;
+  var pending=dayOrders.filter(function(o){return !o.isCompleted&&!o.isPaused}).length;
+  var producing=dayOrders.filter(function(o){return !o.isCompleted&&!o.isPaused&&o.currentStep!=='接单'}).length;
+  var complete=dayOrders.filter(function(o){return o.isCompleted}).length;
+  
+  document.getElementById('statTotal').textContent=dayOrders.length;
+  document.getElementById('statUrgent').textContent=urgent;
+  document.getElementById('statPending').textContent=pending;
+  document.getElementById('statProducing').textContent=producing;
+  document.getElementById('statComplete').textContent=complete;
+  
+  document.getElementById('calTitle').textContent=calMonth.getFullYear()+'年'+(calMonth.getMonth()+1)+'月';
+  document.getElementById('listTitle').textContent=selectedDate+' 交货';
+  document.getElementById('listCount').textContent=dayOrders.length+'单';
+  
+  renderUrgent();
+  renderCalendar();
+  renderWeekRow();
+  renderTodayList(dayOrders);
+  renderCustomerRank();
+}
+
+function renderUrgent(){
+  var urgentOrders=orders.filter(function(o){return o.isUrgent&&!o.isCompleted});
+  var banner=document.getElementById('urgentBanner');
+  var items=document.getElementById('urgentItems');
+  
+  if(urgentOrders.length===0){
+    banner.classList.remove('show');
+    return;
+  }
+  
+  banner.classList.add('show');
+  var html='';
+  urgentOrders.forEach(function(o){
+    html+='<div class="urgent-item" onclick="goToDate(\''+(o.estimatedDate||'')+'\')">';
+    html+='<div class="urgent-code">'+escapeHtml(o.orderNumber)+'</div>';
+    html+='<div class="urgent-info">'+escapeHtml(o.customerName||'')+' · '+escapeHtml(o.estimatedDate||'')+'</div>';
+    html+='</div>';
+  });
+  items.innerHTML=html;
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderCalendar(){
+  var y=calMonth.getFullYear();
+  var m=calMonth.getMonth();
+  var firstDay=new Date(y,m,1).getDay();
+  var daysInMonth=new Date(y,m+1,0).getDate();
+  var daysInPrev=new Date(y,m,0).getDate();
+  var todayStr=new Date().toISOString().split('T')[0];
+  var html='';
+  
+  ['日','一','二','三','四','五','六'].forEach(function(d){html+='<div class="cal-header">'+d+'</div>'});
+  
+  // 上月日期
+  for(var i=firstDay-1;i>=0;i--){html+='<div class="cal-day other"><div class="cal-day-num">'+(daysInPrev-i)+'</div></div>'}
+  
+  // 当月日期
+  for(var d=1;d<=daysInMonth;d++){
+    var dayStr=y+'-'+pad(m+1)+'-'+pad(d);
+    var count=orders.filter(function(o){return o.estimatedDate&&o.estimatedDate.startsWith(dayStr)}).length;
+    var cls='cal-day';
+    if(dayStr===todayStr) cls+=' today';
+    if(dayStr===selectedDate) cls+=' selected';
+    if(count>0) cls+=' has-data';
+    html+='<div class="'+cls+'" onclick="selectDate(\''+dayStr+'\')"><div class="cal-day-num">'+d+'</div>'+(count>0?'<div class="cal-day-count">'+count+'</div>':'')+'</div>';
+  }
+  
+  // 下月日期填满
+  var total=firstDay+daysInMonth;
+  var remaining=total%7===0?0:7-(total%7);
+  for(var d=1;d<=remaining;d++){html+='<div class="cal-day other"><div class="cal-day-num">'+d+'</div></div>'}
+  
+  var grid=document.getElementById('calGrid');
+  grid.innerHTML=html;
+  grid.onwheel=function(e){
+    var now=Date.now();
+    if(now-lastScrollTime<800) return;
+    lastScrollTime=now;
+    if(e.deltaY<0) prevMonth();
+    if(e.deltaY>0) nextMonth();
+    e.preventDefault();
+  };
+}
+
+function renderWeekRow(){
+  var row=document.getElementById('weekRow');
+  var today=new Date();
+  var html='';
+  var w=['日','一','二','三','四','五','六'];
+  
+  for(var i=0;i<7;i++){
+    var d=new Date(today);d.setDate(today.getDate()+i);
+    var dayStr=d.toISOString().split('T')[0];
+    var count=orders.filter(function(o){return o.estimatedDate&&o.estimatedDate.startsWith(dayStr)}).length;
+    var label=i===0?'今天':(i===1?'明天':w[d.getDay()]);
+    html+='<div class="week-item'+(i===0?' today':'')+'">';
+    html+='<div class="week-label">'+label+'</div>';
+    html+='<div class="week-count'+(count>0?' has':'')+'">'+count+'</div>';
+    html+='<div class="week-date">'+(d.getMonth()+1)+'/'+d.getDate()+'</div>';
+    html+='</div>';
+  }
+  row.innerHTML=html;
+}
+
+function selectDate(dateStr){
+  selectedDate=dateStr;
+  renderHomePage();
+}
+
+function goToDate(dateStr){
+  if(dateStr){
+    var parts=dateStr.split('-');
+    calMonth=new Date(parseInt(parts[0]),parseInt(parts[1])-1,1);
+    selectedDate=dateStr;
+    renderHomePage();
+  }
+}
+
+function prevMonth(){
+  calMonth.setMonth(calMonth.getMonth()-1);
+  renderCalendar();
+}
+
+function nextMonth(){
+  calMonth.setMonth(calMonth.getMonth()+1);
+  renderCalendar();
+}
+
+function renderTodayList(dayOrders){
+  var list=document.getElementById('todayList');
+  if(dayOrders.length===0){
+    list.innerHTML='<div class="empty">'+selectedDate+' 无交货订单</div>';
+    return;
+  }
+  dayOrders.sort(function(a,b){
+    if(a.isUrgent&&!b.isUrgent) return -1;
+    if(!a.isUrgent&&b.isUrgent) return 1;
+    return 0;
+  });
+  var html='';
+  dayOrders.forEach(function(o){
+    var iconBg=o.isUrgent?'rgba(220,38,38,0.2)':o.isCompleted?'rgba(22,163,74,0.2)':'rgba(255,255,255,0.08)';
+    var icon=o.isUrgent?'!':o.isCompleted?'V':'O';
+    var statusCls=o.isCompleted?'green':o.isUrgent?'red':'';
+    var statusText=o.isCompleted?'已完成':o.currentStep;
+    html+='<div class="list-item"><div class="list-icon" style="background:'+iconBg+'">'+icon+'</div><div><div class="list-name">'+escapeHtml(o.orderNumber)+'</div><div class="list-sub">'+escapeHtml(o.customerName||'')+'</div></div><div class="list-right"><div class="list-date '+statusCls+'">'+statusText+'</div><div class="list-step">'+escapeHtml(o.currentStep)+'</div></div></div>';
+  });
+  list.innerHTML=html;
+}
+
+function renderOrderPage(){
+  var urgent=orders.filter(function(o){return o.isUrgent&&!o.isCompleted}).length;
+  var producing=orders.filter(function(o){return !o.isCompleted&&!o.isPaused&&o.currentStep!=='接单'}).length;
+  var complete=orders.filter(function(o){return o.isCompleted}).length;
+  
+  document.getElementById('orderTotal').textContent=orders.length;
+  document.getElementById('orderUrgent').textContent=urgent;
+  document.getElementById('orderProducing').textContent=producing;
+  document.getElementById('orderComplete').textContent=complete;
+  document.getElementById('fAll').textContent=orders.length;
+  document.getElementById('fUrgent').textContent=urgent;
+  document.getElementById('fProducing').textContent=producing;
+  document.getElementById('fCompleted').textContent=complete;
+  
+  doFilter();
+}
+
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+  event.currentTarget.classList.add('active');
+  doFilter();
+}
+
+function doFilter(){
+  searchText=document.getElementById('searchInput').value.toLowerCase().trim();
+  var filtered=orders.slice();
+  
+  if(currentFilter==='urgent'){
+    filtered=filtered.filter(function(o){return o.isUrgent&&!o.isCompleted});
+  } else if(currentFilter==='producing'){
+    filtered=filtered.filter(function(o){return !o.isCompleted&&!o.isPaused&&o.currentStep!=='接单'});
+  } else if(currentFilter==='completed'){
+    filtered=filtered.filter(function(o){return o.isCompleted});
+  }
+  
+  if(searchText){
+    filtered=filtered.filter(function(o){
+      return (o.orderNumber&&o.orderNumber.toLowerCase().includes(searchText))||
+             (o.customerName&&o.customerName.toLowerCase().includes(searchText))||
+             (o.productName&&o.productName.toLowerCase().includes(searchText));
+    });
+  }
+  
+  filtered.sort(function(a,b){
+    if(a.isUrgent&&!b.isUrgent) return -1;
+    if(!a.isUrgent&&b.isUrgent) return 1;
+    return (a.estimatedDate||'').localeCompare(b.estimatedDate||'');
+  });
+  
+  renderOrderList(filtered);
+}
+
+function renderOrderList(list){
+  var container=document.getElementById('orderList');
+  if(list.length===0){
+    container.innerHTML='<div class="empty">暂无订单</div>';
+    return;
+  }
+  
+  var html='';
+  list.forEach(function(o){
+    var si=STEPS.indexOf(o.currentStep);
+    var pct=si>=0?Math.round(((si+1)/STEPS.length)*100):0;
+    var iconBg=o.isUrgent?'rgba(220,38,38,0.2)':o.isCompleted?'rgba(22,163,74,0.2)':o.isPaused?'rgba(217,119,6,0.2)':'rgba(255,255,255,0.08)';
+    var icon=o.isUrgent?'!':o.isCompleted?'V':o.isPaused?'||':'O';
+    var statusCls=o.isUrgent?'red':o.isCompleted?'green':o.isPaused?'orange':'';
+    var statusText=o.isCompleted?'已完成':o.isPaused?'暂停':o.currentStep;
+    
+    html+='<div class="order-card" onclick="showDetail(\''+escapeHtml(o.orderNumber)+'\')">';
+    html+='<div class="order-card-icon" style="background:'+iconBg+'">'+icon+'</div>';
+    html+='<div class="order-card-info">';
+    html+='<div class="order-card-num">'+escapeHtml(o.orderNumber)+'</div>';
+    html+='<div class="order-card-customer">'+escapeHtml(o.customerName||'')+' · '+escapeHtml(o.productName||'')+'</div>';
+    html+='<div class="order-card-progress"><div class="order-card-progress-fill" style="width:'+pct+'%"></div></div>';
+    html+='</div>';
+    html+='<div class="order-card-right">';
+    html+='<div class="order-card-status '+statusCls+'">'+statusText+'</div>';
+    html+='<div class="order-card-step">'+escapeHtml(o.currentStep)+'</div>';
+    html+='<div class="order-card-date">'+escapeHtml(o.estimatedDate||'')+'</div>';
+    html+='</div></div>';
+  });
+  container.innerHTML=html;
+}
+
+function showDetail(orderNum){
+  var o=orders.find(function(x){return x.orderNumber===orderNum});
+  if(!o) return;
+  
+  var si=STEPS.indexOf(o.currentStep);
+  var pct=si>=0?Math.round(((si+1)/STEPS.length)*100):0;
+  
+  document.getElementById('modalTitle').textContent=escapeHtml(o.orderNumber);
+  
+  var body='<div class="detail-row"><div class="detail-label">客户名称</div><div class="detail-value">'+escapeHtml(o.customerName||'-')+'</div></div>';
+  body+='<div class="detail-row"><div class="detail-label">产品名称</div><div class="detail-value">'+escapeHtml(o.productName||'-')+'</div></div>';
+  body+='<div class="detail-row"><div class="detail-label">交货日期</div><div class="detail-value">'+escapeHtml(o.estimatedDate||'-')+'</div></div>';
+  body+='<div class="detail-row"><div class="detail-label">当前工序</div><div class="detail-value '+(o.isUrgent?'red':'')+'">'+escapeHtml(o.currentStep)+'</div></div>';
+  body+='<div class="detail-row"><div class="detail-label">完成进度</div><div class="detail-value">'+pct+'%</div></div>';
+  body+='<div class="detail-row"><div class="detail-label">订单状态</div><div class="detail-value '+(o.isUrgent?'red':o.isCompleted?'green':'')+'">'+(o.isUrgent?'紧急':o.isCompleted?'已完成':o.isPaused?'暂停':'生产中')+'</div></div>';
+  if(o.remark){
+    body+='<div class="detail-row"><div class="detail-label">备注</div><div class="detail-value">'+escapeHtml(o.remark)+'</div></div>';
+  }
+  
+  document.getElementById('modalBody').innerHTML=body;
+  document.getElementById('orderModal').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('orderModal').classList.remove('show');
+}
+
+function doExport(){
+  var filtered=orders.slice();
+  
+  if(currentFilter==='urgent'){
+    filtered=filtered.filter(function(o){return o.isUrgent&&!o.isCompleted});
+  } else if(currentFilter==='producing'){
+    filtered=filtered.filter(function(o){return !o.isCompleted&&!o.isPaused&&o.currentStep!=='接单'});
+  } else if(currentFilter==='completed'){
+    filtered=filtered.filter(function(o){return o.isCompleted});
+  }
+  
+  if(searchText){
+    filtered=filtered.filter(function(o){
+      return (o.orderNumber&&o.orderNumber.toLowerCase().includes(searchText))||
+             (o.customerName&&o.customerName.toLowerCase().includes(searchText))||
+             (o.productName&&o.productName.toLowerCase().includes(searchText));
+    });
+  }
+  
+  if(filtered.length===0){
+    alert('暂无订单可导出');
+    return;
+  }
+  
+  var csv='订单号,客户名称,产品名称,当前工序,交货日期,状态,是否急单\n';
+  filtered.forEach(function(o){
+    csv+='"'+(o.orderNumber||'')+'",';
+    csv+='"'+(o.customerName||'')+'",';
+    csv+='"'+(o.productName||'')+'",';
+    csv+='"'+(o.currentStep||'')+'",';
+    csv+='"'+(o.estimatedDate||'')+'",';
+    csv+='"'+(o.isCompleted?'已完成':o.isPaused?'暂停':'生产中')+'",';
+    csv+='"'+(o.isUrgent?'是':'否')+'"';
+    csv+='\n';
+  });
+  
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='订单列表_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+loadOrders();
+setInterval(loadOrders,30000); // Auto-refresh every 30 seconds
+
+var G_CLASSES=[
+  {label:'1-20G',min:1,max:20},
+  {label:'21-50G',min:21,max:50},
+  {label:'51-100G',min:51,max:100},
+  {label:'101-200G',min:101,max:200},
+  {label:'201-500G',min:201,max:500},
+  {label:'500G+',min:500,max:999999}
+];
+
+function getGClass(qty){
+  for(var i=0;i<G_CLASSES.length;i++){
+    if(qty>=G_CLASSES[i].min&&qty<=G_CLASSES[i].max)return G_CLASSES[i];
+  }
+  return G_CLASSES[G_CLASSES.length-1];
+}
+
+function renderCustomerRank(){
+  var today=new Date().toISOString().split('T')[0];
+  var dayOrders=orders.filter(function(o){return o.estimatedDate&&o.estimatedDate.startsWith(today)&&!o.isCompleted&&!o.isPaused});
+  var customerMap={};
+  dayOrders.forEach(function(o){
+    var name=o.customerName||'未知客户';
+    if(!customerMap[name]){customerMap[name]={name:name,count:0,totalQty:0};}
+    customerMap[name].count++;
+    customerMap[name].totalQty+=(parseInt(o.quantityG)||0);
+  });
+  var customers=Object.values(customerMap).sort(function(a,b){return b.count-a.count});
+  var container=document.getElementById('customerRankList');
+  var countEl=document.getElementById('customerRankCount');
+  if(countEl) countEl.textContent=customers.length+'客户';
+  if(customers.length===0){container.innerHTML='<div class="empty">今日无订单</div>';return;}
+  var html='';
+  customers.slice(0,5).forEach(function(c,i){
+    var rankClass='customer-rank'+(i===0?' top1':(i===1?' top2':(i===2?' top3':'')));
+    html+='<div class="customer-list-item" onclick="showCustomerDetail(\''+c.name.replace(/'/g,"\\'")+'\')">';
+    html+='<div class="'+rankClass+'">'+(i+1)+'</div>';
+    html+='<div class="customer-info"><div class="customer-name">'+escapeHtml(c.name)+'</div><div class="customer-order-count">'+c.count+'单</div></div>';
+    html+='<div class="customer-g-total">'+c.totalQty+'G</div></div>';
+  });
+  container.innerHTML=html;
+}
+
+function showCustomerDetail(customerName){
+  var now=new Date();
+  var thisMonth=now.getFullYear()+'/'+(now.getMonth()+1);
+  var monthOrders=orders.filter(function(o){
+    if(!o.estimatedDate||!o.customerName) return false;
+    var d=new Date(o.estimatedDate);
+    var m=d.getFullYear()+'/'+(d.getMonth()+1);
+    return m===thisMonth&&o.customerName===customerName;
+  });
+  var gStats={};
+  G_CLASSES.forEach(function(g){gStats[g.label]={count:0};});
+  var totalQty=0;
+  monthOrders.forEach(function(o){
+    var qty=parseInt(o.quantityG)||0;
+    totalQty+=qty;
+    gStats[getGClass(qty).label].count++;
+  });
+  var html='<div class="customer-detail-header"><div class="customer-back" onclick="hideCustomerDetail()">←</div><div class="customer-detail-name">'+escapeHtml(customerName)+'</div></div>';
+  html+='<div class="g-class-wrap">';
+  G_CLASSES.forEach(function(gc){
+    var stat=gStats[gc.label];
+    html+='<div class="g-class-item'+(stat.count>0?' highlight':'')+'"><div class="g-class-label">'+gc.label+'</div><div class="g-class-count">'+(stat.count||0)+'单</div></div>';
+  });
+  html+='</div>';
+  html+='<div style="font-size:17px;color:rgba(255,255,255,0.5);margin-bottom:12px">'+thisMonth+' 订单明细</div>';
+  monthOrders.forEach(function(o){
+    var gc=getGClass(parseInt(o.quantityG)||0);
+    html+='<div class="order-card">';
+    html+='<div class="order-card-icon" style="background:'+(o.isUrgent?'rgba(220,38,38,0.2)':'rgba(255,255,255,0.1)')+'">'+(o.isUrgent?'🔥':'')+'</div>';
+    html+='<div class="order-card-info"><div class="order-card-num">'+escapeHtml(o.orderNumber)+'</div><div class="order-card-customer">'+escapeHtml(o.productName||'')+'</div></div>';
+    html+='<div class="order-card-right"><div class="order-card-status '+(o.isCompleted?'green':(o.isUrgent?'red':'orange'))+'">'+o.currentStep+'</div><div class="order-card-step">'+gc.label+' | '+(parseInt(o.quantityG)||0)+'G</div></div>';
+    html+='</div>';
+  });
+  document.getElementById('customerDetail').innerHTML=html;
+  document.getElementById('customerDetail').style.display='block';
+  document.getElementById('customerList').style.display='none';
+  document.getElementById('customerStats').style.display='none';
+}
+
+function hideCustomerDetail(){
+  document.getElementById('customerDetail').style.display='none';
+  document.getElementById('customerList').style.display='block';
+  document.getElementById('customerStats').style.display='grid';
+}
+
+function renderCustomerPage(){
+  var today=new Date().toISOString().split('T')[0];
+  var dayOrders=orders.filter(function(o){return o.estimatedDate&&o.estimatedDate.startsWith(today)});
+  var uniqueCustomers=[...new Set(dayOrders.map(function(o){return o.customerName||'未知客户'}))];
+  var totalQty=dayOrders.reduce(function(s,o){return s+(parseInt(o.quantityG)||0);},0);
+  document.getElementById('customerStats').innerHTML=
+    '<div class="customer-stat"><div class="customer-stat-value">'+uniqueCustomers.length+'</div><div class="customer-stat-label">今日客户</div></div>'+
+    '<div class="customer-stat"><div class="customer-stat-value">'+dayOrders.length+'</div><div class="customer-stat-label">今日订单</div></div>'+
+    '<div class="customer-stat"><div class="customer-stat-value">'+totalQty+'G</div><div class="customer-stat-label">今日总量</div></div>';
+  var customerMap={};
+  dayOrders.forEach(function(o){
+    var name=o.customerName||'未知客户';
+    if(!customerMap[name]){customerMap[name]={name:name,count:0,totalQty:0};}
+    customerMap[name].count++;
+    customerMap[name].totalQty+=(parseInt(o.quantityG)||0);
+  });
+  var customers=Object.values(customerMap).sort(function(a,b){return b.count-a.count});
+  var html='';
+  customers.forEach(function(c,i){
+    var rankClass='customer-rank'+(i===0?' top1':(i===1?' top2':(i===2?' top3':'')));
+    html+='<div class="customer-list-item" onclick="showCustomerDetail(\''+c.name.replace(/'/g,"\\'")+'\')">';
+    html+='<div class="'+rankClass+'">'+(i+1)+'</div>';
+    html+='<div class="customer-info"><div class="customer-name">'+escapeHtml(c.name)+'</div><div class="customer-order-count">'+c.count+'单 | '+c.totalQty+'G</div></div>';
+    html+='<div class="customer-g-total">'+c.totalQty+'G</div></div>';
+  });
+  if(html==='') html='<div class="empty">今日无订单</div>';
+  document.getElementById('customerList').innerHTML=html;
+}
+</script>
+</body>
+</html>

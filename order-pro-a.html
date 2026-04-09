@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>接单录入 - 合盛</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f5f5f7;color:#1d1d1f;font-size:16px;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:20px}
+.header{padding:24px 20px;background:#fff;border-radius:20px;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.back{font-size:14px;color:#86868b;margin-bottom:12px;cursor:pointer}
+.header-title{font-size:20px;font-weight:700;color:#1d1d1f}
+.form-section{background:#fff;border-radius:20px;margin-bottom:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.section-header{padding:16px 24px;background:#fafafa;border-bottom:1px solid #f0f0f5;font-size:14px;font-weight:600;color:#1d1d1f}
+.form-row{padding:16px 24px;border-bottom:1px solid #f5f5f7}
+.form-row:last-child{border-bottom:none}
+.form-label{display:block;font-size:13px;color:#86868b;margin-bottom:8px}
+.form-input{width:100%;padding:14px 16px;border:1px solid #d2d2d7;border-radius:12px;font-size:16px;color:#1d1d1f;background:#fff;box-sizing:border-box;outline:none}
+.form-input:focus{border-color:#007aff}
+.form-input::placeholder{color:#ccc}
+.scan-section{padding:16px 20px}
+.scan-title{font-size:12px;color:#86868b;margin-bottom:10px;text-transform:uppercase}
+.scan-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.scan-btn{background:#fff;border:1px solid #d2d2d7;border-radius:12px;padding:16px;text-align:center;cursor:pointer;font-size:15px;color:#1d1d1f;box-shadow:0 2px 8px rgba(0,0,0,0.06)}
+.result{background:#e8f5e9;border-radius:12px;padding:14px;margin-top:12px;font-size:14px;color:#166534;display:none}
+.result.show{display:block}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #eee;padding:16px 20px;max-width:480px;margin:0 auto}
+.submit-btn{width:100%;background:#007aff;color:#fff;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:600;cursor:pointer}
+.submit-btn:disabled{background:#ccc;cursor:not-allowed}
+.success-popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center}
+.success-popup.show{display:flex}
+.success-box{background:#fff;border-radius:20px;padding:30px;width:320px;margin:20px;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.success-icon{width:56px;height:56px;background:#34c759;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff;margin:0 auto 16px}
+.success-title{font-size:18px;font-weight:700;text-align:center;color:#1d1d1f;margin-bottom:8px}
+.success-sub{font-size:14px;color:#86868b;text-align:center;margin-bottom:16px}
+.success-link-box{background:#f5f5f7;border-radius:12px;padding:14px;margin-bottom:16px}
+.success-link-label{font-size:12px;color:#86868b;margin-bottom:6px}
+.success-link{font-size:14px;color:#1d1d1f;word-break:break-all;line-height:1.4}
+.success-btns{display:flex;gap:12px}
+.success-btn{flex:1;background:#007aff;color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;text-align:center}
+.success-btn.secondary{background:#f5f5f7;color:#1d1d1f}
+.loading{text-align:center;padding:60px;color:#86868b}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<div class="header">
+<div class="back" onclick="history.back()">← 返回</div>
+<div class="header-title">接单录入</div>
+</div>
+
+<div class="form">
+<!-- 客户信息 -->
+<div class="form-section">
+<div class="section-header">客户信息</div>
+<div class="form-row">
+<label class="form-label">客户名称 *</label>
+<input type="text" class="form-input" id="customerName" placeholder="输入客户名称" oninput="checkCustomer()">
+</div>
+<div class="form-row">
+<label class="form-label">客户类型</label>
+<select class="form-input" id="customerType">
+<option value="常规客户">常规客户</option>
+<option value="VIP客户">VIP客户</option>
+<option value="新客户">新客户</option>
+</select>
+</div>
+<div class="form-row">
+<label class="form-label">联系人</label>
+<input type="text" class="form-input" id="contact" placeholder="联系人姓名">
+</div>
+<div class="form-row">
+<label class="form-label">联系电话</label>
+<input type="tel" class="form-input" id="phone" placeholder="手机号码">
+</div>
+</div>
+
+<!-- 扫描录入 -->
+<div class="scan-section">
+<div class="scan-title">快速录入</div>
+
+
+</div>
+<div class="result" id="scanResult">
+<div id="scanResultText"></div>
+</div>
+</div>
+
+
+<!-- 产品信息 -->
+<div class="form-section">
+<div class="section-header">产品信息</div>
+<div class="form-row">
+<label class="form-label">产品名称 *</label>
+<input type="text" class="form-input" id="productName" placeholder="例：统一扣 25#">
+</div>
+<div class="form-row">
+<label class="form-label">规格/型号</label>
+<input type="text" class="form-input" id="spec" placeholder="例：25# 统一扣">
+</div>
+<div class="form-row">
+<label class="form-label">颜色</label>
+<input type="text" class="form-input" id="color" placeholder="颜色要求">
+</div>
+<div class="form-row">
+<label class="form-label">数量 *</label>
+<input type="number" class="form-input" id="quantity" placeholder="数量">
+</div>
+<div class="form-row">
+<label class="form-label">单位</label>
+<select class="form-input" id="unit">
+<option value="G">G (1G=144颗)</option>
+<option value="KG">KG (千克)</option>
+<option value="颗">颗</option>
+<option value="罗">罗 (12G)</option>
+</select>
+</div>
+</div>
+
+<!-- 订单设置 -->
+<div class="form-section">
+<div class="section-header">订单设置</div>
+<div class="form-row">
+<label class="form-label">交货日期 *</label>
+<input type="date" class="form-input" id="deliveryDate">
+</div>
+<div class="form-row">
+<label class="form-label">优先级</label>
+<select class="form-input" id="priority">
+<option value="普通">普通</option>
+<option value="加急">加急</option>
+<option value="紧急">紧急</option>
+</select>
+</div>
+<div class="form-row">
+<label class="form-label">配送方式</label>
+<select class="form-input" id="deliveryType">
+<option value="自提">自提</option>
+<option value="送货">送货</option>
+<option value="快递">快递</option>
+</select>
+</div>
+<div class="form-row">
+<label class="form-label">备注</label>
+<textarea class="form-input" id="remark" rows="2" placeholder="客户特殊要求"></textarea>
+</div>
+</div>
+
+<div style="height:100px"></div>
+</div>
+
+<div class="bottom">
+<button class="submit-btn" id="submitBtn" onclick="submitOrder()">提交订单</button>
+</div>
+
+<!-- 成功弹窗 -->
+<div class="success-popup" id="successPopup">
+<div class="success-box">
+<div class="success-icon">V</div>
+<div class="success-title">订单创建成功</div>
+<div class="success-sub" id="successSub">订单号已生成</div>
+<div class="success-link-box">
+<div class="success-link-label">客户跟踪链接（发送给客户）</div>
+<div class="success-link" id="followUrl"></div>
+</div>
+<div class="success-btns">
+<button class="success-btn secondary" onclick="copyLink()">复制链接</button>
+<button class="success-btn" onclick="continueAdd()">继续录入</button>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+// 客户数据（模拟）
+var customers=[
+  {name:'张三制衣厂',type:'VIP客户',contact:'张总',phone:'13800138001'},
+  {name:'李四制衣',type:'常规客户',contact:'李经理',phone:'13800138002'},
+  {name:'王五制衣厂',type:'常规客户',contact:'王总',phone:'13800138003'},
+  {name:'赵六制衣',type:'新客户',contact:'赵总',phone:'13800138004'}
+];
+
+var lastFollowUrl='';
+
+function checkCustomer(){
+  var name=document.getElementById('customerName').value.trim();
+  if(name.length>=2){
+    var found=customers.find(function(c){return c.name.includes(name)});
+    if(found){
+      document.getElementById('customerType').value=found.type;
+      document.getElementById('contact').value=found.contact;
+      document.getElementById('phone').value=found.phone;
+    }
+  }
+}
+
+
+
+function scanGallery(){
+  var input=document.createElement('input');
+  input.type='file';
+  input.accept='image/*';
+  input.onchange=function(){handleScan(input)};
+  input.click();
+}
+
+,1000);
+}
+
+function submitOrder(){
+  var customerName=document.getElementById('customerName').value.trim();
+  var productName=document.getElementById('productName').value.trim();
+  var quantity=document.getElementById('quantity').value;
+  var deliveryDate=document.getElementById('deliveryDate').value;
+  
+  if(!customerName||!productName||!quantity||!deliveryDate){
+    alert('请填写必填项');
+    return;
+  }
+  
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;
+  btn.textContent='提交中...';
+  
+  var order={
+    customerName:customerName,
+    customerType:document.getElementById('customerType').value,
+    contact:document.getElementById('contact').value,
+    phone:document.getElementById('phone').value,
+    productName:productName,
+    spec:document.getElementById('spec').value,
+    color:document.getElementById('color').value,
+    quantity:quantity,
+    unit:document.getElementById('unit').value,
+    deliveryDate:deliveryDate,
+    priority:document.getElementById('priority').value,
+    deliveryType:document.getElementById('deliveryType').value,
+    remark:document.getElementById('remark').value
+  };
+  
+  fetch('/api/create_order',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(order)
+  })
+  .then(function(r){return r.json()})
+  .then(function(data){
+    btn.disabled=false;
+    btn.textContent='提交订单';
+    
+    if(data.success){
+      lastFollowUrl=data.followUrl;
+      document.getElementById('successSub').textContent='订单号：'+data.orderNumber;
+      document.getElementById('followUrl').textContent=data.followUrl;
+      document.getElementById('successPopup').classList.add('show');
+    } else {
+      alert('提交失败：'+data.message);
+    }
+  })
+  .catch(function(e){
+    btn.disabled=false;
+    btn.textContent='提交订单';
+    alert('提交失败：'+e);
+  });
+}
+
+function copyLink(){
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(lastFollowUrl).then(function(){
+      alert('链接已复制');
+    });
+  } else {
+    prompt('复制此链接:',lastFollowUrl);
+  }
+}
+
+function continueAdd(){
+  document.getElementById('successPopup').classList.remove('show');
+  // 清空表单
+  document.getElementById('customerName').value='';
+  document.getElementById('customerType').value='常规客户';
+  document.getElementById('contact').value='';
+  document.getElementById('phone').value='';
+  document.getElementById('productName').value='';
+  document.getElementById('spec').value='';
+  document.getElementById('color').value='';
+  document.getElementById('quantity').value='';
+  document.getElementById('unit').value='G';
+  document.getElementById('remark').value='';
+  // 重设交货日期
+  var d=new Date();
+  d.setDate(d.getDate()+15);
+  document.getElementById('deliveryDate').value=d.toISOString().split('T')[0];
+}
+
+// 设置默认交货日期为15天后
+var d=new Date();
+d.setDate(d.getDate()+15);
+document.getElementById('deliveryDate').value=d.toISOString().split('T')[0];
+</script>
+
+</body>
+</html>
