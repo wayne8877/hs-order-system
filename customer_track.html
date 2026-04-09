@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>合盛 - 客户查询</title>
+<style>
+:root {
+  --bg: #0D0D0D;
+  --surface-1: #111111;
+  --surface-2: #161616;
+  --surface-3: #1C1C1C;
+  --border: rgba(255,255,255,0.06);
+  --border-hover: rgba(255,255,255,0.1);
+  --text-primary: #FFFFFF;
+  --text-secondary: #8A8A8A;
+  --text-tertiary: #525252;
+  --accent: #5E6AD2;
+  --accent-bg: rgba(94,106,210,0.12);
+  --green: #2DA94E;
+  --green-bg: rgba(45,169,78,0.1);
+  --red: #F23D3D;
+  --red-bg: rgba(242,61,61,0.1);
+  --amber: #F59E0B;
+  --amber-bg: rgba(245,158,11,0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --font: 'Inter','-apple-system','system-ui',sans-serif;
+  --transition: 150ms ease;
+}
+* {margin:0;padding:0;box-sizing:border-box}
+html,body {height:100%;overflow:hidden}
+body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--text-primary);height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+
+.header {height:48px;background:var(--surface-1);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.back-btn {width:32px;height:32px;border-radius:6px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.back-btn:hover {background:var(--surface-3);color:var(--text-primary)}
+.header-title {font-size:15px;font-weight:600}
+.header-right {margin-left:auto;display:flex;align-items:center}
+.sync-time {font-size:12px;color:var(--text-tertiary)}
+
+.main {flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.main::-webkit-scrollbar {width:4px}
+.main::-webkit-scrollbar-thumb {background:var(--surface-3);border-radius:2px}
+
+.search-wrap {position:relative}
+.search-input {width:100%;padding:10px 14px 10px 38px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface-1);color:var(--text-primary);font-size:14px;font-family:var(--font)}
+.search-input:focus {outline:none;border-color:var(--accent)}
+.search-input::placeholder {color:var(--text-tertiary)}
+.search-icon {position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:0.4}
+
+.section-label {font-size:11px;color:var(--text-tertiary);font-weight:500;letter-spacing:0.04em;text-transform:uppercase;padding:4px 0 8px}
+
+.customer-list {display:flex;flex-direction:column;gap:4px}
+.customer-item {
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:var(--radius-md);
+  background:var(--surface-1);border:1px solid var(--border);
+  cursor:pointer;transition:all var(--transition);
+}
+.customer-item:hover {border-color:var(--border-hover);background:var(--surface-2)}
+.customer-avatar {width:34px;height:34px;background:var(--surface-3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text-secondary);flex-shrink:0}
+.customer-name {font-size:14px;font-weight:500;color:var(--text-primary);flex:1}
+.customer-count {font-size:12px;color:var(--text-tertiary)}
+.customer-arrow {color:var(--text-tertiary);font-size:12px}
+
+.order-list {display:flex;flex-direction:column;gap:4px}
+.order-item {
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:var(--radius-md);
+  background:var(--surface-1);border:1px solid var(--border);
+  cursor:pointer;transition:all var(--transition);
+}
+.order-item:hover {border-color:var(--border-hover);background:var(--surface-2)}
+.order-num {font-size:13px;font-weight:600;font-family:'SF Mono','Menlo',monospace;color:var(--text-primary)}
+.order-meta {font-size:12px;color:var(--text-tertiary);flex:1}
+.order-status {font-size:11px;font-weight:500;padding:2px 8px;border-radius:10px}
+.order-status.urgent {background:var(--red-bg);color:var(--red)}
+.order-status.producing {background:var(--amber-bg);color:var(--amber)}
+.order-status.done {background:var(--green-bg);color:var(--green)}
+.order-status.idle {background:var(--surface-3);color:var(--text-secondary)}
+
+.back-link {display:flex;align-items:center;gap:6px;padding:8px 0;font-size:13px;color:var(--text-secondary);cursor:pointer;margin-bottom:4px}
+.back-link:hover {color:var(--text-primary)}
+
+.empty {text-align:center;padding:40px 0;color:var(--text-tertiary);font-size:13px}
+
+.modal {display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal.show {display:flex}
+.modal-content {background:var(--surface-1);border:1px solid var(--border);border-radius:10px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto}
+.modal-header {padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title {font-size:14px;font-weight:600}
+.modal-close {width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover {background:var(--surface-3)}
+.modal-body {padding:14px 16px}
+.detail-row {display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child {border-bottom:none}
+.detail-label {font-size:13px;color:var(--text-tertiary)}
+.detail-value {font-size:13px;font-weight:500;text-align:right}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button class="back-btn" onclick="window.location.href='/'">&#8592;</button>
+  <div class="header-title">客户查询</div>
+  <div class="header-right">
+    <div class="sync-time" id="syncTime">--:--</div>
+  </div>
+</div>
+
+<div class="main" id="main">
+  <div class="search-wrap">
+    <svg class="search-icon" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    <input type="text" class="search-input" id="searchInput" placeholder="搜索客户名称..." oninput="doSearch()">
+  </div>
+
+  <div id="customerView">
+    <div class="section-label">全部客户</div>
+    <div class="customer-list" id="customerList"><div class="empty">加载中...</div></div>
+  </div>
+
+  <div id="orderView" style="display:none">
+    <div class="back-link" onclick="showCustomerView()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      返回客户列表
+    </div>
+    <div class="section-label" id="orderListTitle">客户订单</div>
+    <div class="order-list" id="orderList"><div class="empty">暂无订单</div></div>
+  </div>
+</div>
+
+<div class="modal" id="orderModal" onclick="if(event.target===this)closeModal()">
+<div class="modal-content">
+<div class="modal-header">
+  <div class="modal-title" id="modalTitle">订单详情</div>
+  <button class="modal-close" onclick="closeModal()">x</button>
+</div>
+<div class="modal-body" id="modalBody"></div>
+</div>
+</div>
+
+<script src="shared.js"></script>
+<script>
+var FS_APP_TOKEN = 'ZXaCbhbaOaUylfsznlRcICJSnMh';
+var FS_APP_ID = 'cli_a94bdf0fc3b89bb7';
+var FS_APP_SECRET = 'p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
+var FS_CUST_TABLE = 'tblMqxTf98wrJRo3';
+var FS_ORDER_TABLE = 'tbl5h2tvRGJ86POP';
+var FS_PROD_TABLE = 'tblulFnP5TbawnY1';
+var fsAccessToken = null;
+
+var allCustomers = [];
+var allOrders = [];
+var allProducts = [];
+var currentCustomer = null;
+
+async function getFeishuToken() {
+  if (fsAccessToken) return fsAccessToken;
+  try {
+    var r = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({app_id:FS_APP_ID, app_secret:FS_APP_SECRET})
+    });
+    var d = await r.json();
+    if (d.tenant_access_token) fsAccessToken = d.tenant_access_token;
+  } catch(e) {}
+  return fsAccessToken;
+}
+
+async function loadAll() {
+  var token = await getFeishuToken();
+  if (!token) return;
+  await Promise.all([loadCustomers(), loadOrders(), loadProducts()]);
+  renderCustomerList(allCustomers);
+  updateSyncTime();
+}
+
+async function loadCustomers() {
+  var token = await getFeishuToken();
+  try {
+    var r = await fetch(
+      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_CUST_TABLE + '/records?page_size=100',
+      { headers:{Authorization:'Bearer '+token} }
+    );
+    var d = await r.json();
+    if (d.data && d.data.items) {
+      allCustomers = d.data.items.map(function(item) {
+        return {
+          id: item.record_id,
+          name: item.fields['客户名称'] || '-',
+          contact: item.fields['联系方式'] || ''
+        };
+      }).filter(function(c){ return c.name !== '-'; });
+    }
+  } catch(e) {}
+}
+
+async function loadOrders() {
+  var token = await getFeishuToken();
+  try {
+    var r = await fetch(
+      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_ORDER_TABLE + '/records?page_size=100',
+      { headers:{Authorization:'Bearer '+token} }
+    );
+    var d = await r.json();
+    if (d.data && d.data.items) {
+      allOrders = d.data.items;
+    }
+  } catch(e) {}
+}
+
+async function loadProducts() {
+  var token = await getFeishuToken();
+  try {
+    var r = await fetch(
+      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_PROD_TABLE + '/records?page_size=100',
+      { headers:{Authorization:'Bearer '+token} }
+    );
+    var d = await r.json();
+    if (d.data && d.data.items) {
+      allProducts = d.data.items;
+    }
+  } catch(e) {}
+}
+
+function getProductName(prodCode) {
+  if (!prodCode) return '-';
+  var p = allProducts.find(function(x){ return (x.fields['产品编号']||'') === prodCode; });
+  return p ? p.fields['名称'] : prodCode;
+}
+
+function renderCustomerList(customers) {
+  var container = document.getElementById('customerList');
+  if (customers.length === 0) { container.innerHTML = '<div class="empty">暂无客户</div>'; return; }
+  var html = '';
+  customers.forEach(function(c) {
+    var orderCount = allOrders.filter(function(o) {
+      var custLink = o.fields['客户编号'];
+      if (!custLink) return false;
+      var custId = custLink.record_id || (custLink.link && custLink.link[0] && custLink.link[0].record_id);
+      return custId === c.id;
+    }).length;
+    html += '<div class="customer-item" onclick="showCustomerOrders(\'' + escapeHtml(c.id) + '\',\'' + escapeHtml(c.name) + '\')">';
+    html += '<div class="customer-avatar">' + (c.name.charAt(0) || '?') + '</div>';
+    html += '<div class="customer-name">' + escapeHtml(c.name) + '</div>';
+    html += '<div class="customer-count">' + orderCount + ' 单</div>';
+    html += '<div class="customer-arrow">→</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function showCustomerOrders(custId, custName) {
+  currentCustomer = {id: custId, name: custName};
+  var custOrders = allOrders.filter(function(o) {
+    var custLink = o.fields['客户编号'];
+    if (!custLink) return false;
+    var cid = custLink.record_id || (custLink.link && custLink.link[0] && custLink.link[0].record_id);
+    return cid === custId;
+  });
+  document.getElementById('orderListTitle').textContent = custName + ' · ' + custOrders.length + ' 单';
+  var container = document.getElementById('orderList');
+  if (custOrders.length === 0) { container.innerHTML = '<div class="empty">暂无订单</div>'; }
+  else {
+    var html = '';
+    custOrders.forEach(function(o) {
+      var prodLink = o.fields['产品编号'];
+      var prodCode = (prodLink && prodLink.text) ? prodLink.text : (Array.isArray(prodLink) ? prodLink[0] : '');
+      var prodName = getProductName(prodCode);
+      var qty = o.fields['数量'] || 0;
+      var est = o.fields['要求交货时间'];
+      var estStr = est ? new Date(est).toLocaleDateString('zh-CN') : '-';
+      var today = new Date().toISOString().split('T')[0];
+      var daysLeft = est ? Math.ceil((new Date(est) - new Date(today)) / 86400000) : null;
+      var isUrgent = daysLeft !== null && daysLeft >= 0 && daysLeft <= 3;
+      var statusClass = isUrgent ? 'urgent' : 'producing';
+      var statusText = isUrgent ? '紧急' : '生产中';
+      html += '<div class="order-item">';
+      html += '<div class="order-num">' + escapeHtml(prodCode) + '</div>';
+      html += '<div class="order-meta">' + escapeHtml(prodName) + ' · ' + qty + '件</div>';
+      html += '<div class="order-status ' + statusClass + '">' + statusText + '</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  }
+  document.getElementById('customerView').style.display = 'none';
+  document.getElementById('orderView').style.display = 'block';
+}
+
+function showCustomerView() {
+  document.getElementById('customerView').style.display = 'block';
+  document.getElementById('orderView').style.display = 'none';
+  currentCustomer = null;
+}
+
+function doSearch() {
+  var q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if (!q) { renderCustomerList(allCustomers); return; }
+  var filtered = allCustomers.filter(function(c){ return c.name.toLowerCase().includes(q); });
+  renderCustomerList(filtered);
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function updateSyncTime() {
+  var now = new Date();
+  document.getElementById('syncTime').textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+
+loadAll();
+setInterval(loadAll, 30000);
+</script>
+</body>
+</html>
