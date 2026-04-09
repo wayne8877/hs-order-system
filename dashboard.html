@@ -279,30 +279,46 @@ body{font-family:'Microsoft YaHei','PingFang SC',sans-serif;background:#0d0d0d;c
 <div class="order-list" id="orderList"><div class="empty">加载中...</div></div>
 </div>
 
-<!-- 其他Tab -->
-<div id="customerPage" class="tab-content" style="overflow-x:hidden">
-    <div class="customer-stats" id="customerStats"></div>
-    <div class="customer-list" id="customerList"><div class="empty">加载中...</div></div>
-    <div class="customer-detail" id="customerDetail" style="display:none"></div>
+<!-- 库存Tab -->
+<div id="inventoryPage" class="tab-content">
+<div class="tab-empty" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:60px 20px;text-align:center">
+<div style="font-size:56px;margin-bottom:16px">📦</div>
+<div class="tab-empty-title" style="font-size:18px;color:rgba(255,255,255,0.8);margin-bottom:8px">库存模块待接入</div>
+<div class="tab-empty-text" style="font-size:15px;line-height:1.8">
+Wayne 正在配置飞书表格<br>
+库存、入库、出库、预警一旦接通<br>
+数据将实时展示在此处
 </div>
-<div id="otherPage" class="tab-content">
-<div class="tab-empty">
-<div class="tab-empty-title">功能开发中</div>
-<div class="tab-empty-text">该模块正在努力开发中，敬请期待</div>
+<div style="margin-top:24px;padding:12px 24px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:10px;display:inline-block">
+<div style="font-size:13px;color:#f59e0b;font-weight:600">⏳ 等待飞书数据接入</div>
+</div>
+</div>
+</div>
+
+<!-- 设置Tab -->
+<div id="settingsPage" class="tab-content">
+<div style="padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+<div style="font-size:15px;color:#fff">刷新间隔</div>
+<div style="font-size:14px;color:rgba(255,255,255,0.5)">30秒 ✓</div>
+</div>
+<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+<div style="font-size:15px;color:#fff">深色模式</div>
+<div style="font-size:14px;color:rgba(255,255,255,0.5)">始终开启 ✓</div>
+</div>
+<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+<div style="font-size:15px;color:#fff">系统版本</div>
+<div style="font-size:14px;color:rgba(255,255,255,0.5)">v2.0</div>
+</div>
 </div>
 </div>
 </div>
 
 <div class="nav">
-<button class="nav-item active" onclick="switchTab('home', this)"><div class="nav-label">首页</div></button>
-<button class="nav-item" onclick="switchTab('orders', this)"><div class="nav-label">订单</div></button>
-<button class="nav-item" onclick="switchTab('sample', this)"><div class="nav-label">打样</div></button>
-<button class="nav-item" onclick="switchTab('attendance', this)"><div class="nav-label">考勤</div></button>
-<button class="nav-item" onclick="switchTab('overtime', this)"><div class="nav-label">加班</div></button>
-<button class="nav-item" onclick="switchTab('maintenance', this)"><div class="nav-label">修机</div></button>
-<button class="nav-item" onclick="switchTab('law', this)"><div class="nav-label">法规</div></button>
-<button class="nav-item" onclick="switchTab('material', this)"><div class="nav-label">原料</div></button>
-<button class="nav-item" onclick="switchTab('inventory', this)"><div class="nav-label">库管</div></button>
+<button class="nav-item active" onclick="switchTab('home', this)"><div class="nav-label">🏠 首页</div></button>
+<button class="nav-item" onclick="switchTab('orders', this)"><div class="nav-label">📋 订单</div></button>
+<button class="nav-item" onclick="switchTab('inventory', this)"><div class="nav-label">📦 库存</div></button>
+<button class="nav-item" onclick="switchTab('settings', this)"><div class="nav-label">⚙️ 设置</div></button>
 </div>
 
 <!-- 弹窗 -->
@@ -339,26 +355,21 @@ function switchTab(tab, el){
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active')});
   document.querySelectorAll('.filter-btn').forEach(function(n){n.classList.remove('active')});
   if(el) el.classList.add('active');
-  else {
-    var navBtns=document.querySelectorAll('.nav-item');
-    navBtns.forEach(function(n){if(n.textContent.includes(tab==='home'?'首页':tab==='orders'?'订单':tab==='customer'?'客户':''))n.classList.add('active');});
-  }
   
   document.getElementById('homePage').classList.remove('active');
   document.getElementById('ordersPage').classList.remove('active');
-  document.getElementById('customerPage').classList.remove('active');
-  document.getElementById('otherPage').classList.remove('active');
+  document.getElementById('inventoryPage').classList.remove('active');
+  document.getElementById('settingsPage').classList.remove('active');
   
   if(tab==='home'){
     document.getElementById('homePage').classList.add('active');
   } else if(tab==='orders'){
     document.getElementById('ordersPage').classList.add('active');
     renderOrderPage();
-  } else if(tab==='customer'){
-    document.getElementById('customerPage').classList.add('active');
-    renderCustomerPage();
-  } else {
-    document.getElementById('otherPage').classList.add('active');
+  } else if(tab==='inventory'){
+    document.getElementById('inventoryPage').classList.add('active');
+  } else if(tab==='settings'){
+    document.getElementById('settingsPage').classList.add('active');
   }
 }
 
