@@ -65,57 +65,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;backg
 <div class="wrap">
 <div id="app"><div class="loading">加载中...</div></div>
 </div>
+<script src="shared.js"></script>
 <script>
-var STEPS=['接单','调色','制胚','切胚','甩干','筛胚','初检','车钮','抛光','终检','包装','出货'];
 var allOrders=[];
 var stepCompletedTimes={};
 var showOnlyActive=false;
-function setShowOnlyActive(v){showOnlyActive=v;renderList();}var filteredOrders=allOrders;
-function formatTime(d){
-  var h=d.getHours();
-  var m=String(d.getMinutes()).padStart(2,'0');
-  var ampm=h>=12?'PM':'AM';
-  var h12=h%12;
-  if(h12===0) h12=12;
-  return d.getFullYear()+'/'+String(d.getMonth()+1)+'/'+d.getDate()+' '+h12+':'+m+' '+ampm;
-}
+var currentDetailIdx=0;
 
-function getDaysLeft(date){
-  if(!date) return 999;
-  return Math.ceil((new Date(date)-new Date())/(1000*60*60*24));
-}
-
-function init(){
-  fetch('/api/orders')
-    .then(function(r){return r.json()})
-    .then(function(data){
-      allOrders=data.orders||[];
-      renderList();
-    })
-    .catch(function(){
-      allOrders=[];
-      renderList();
-    });
+function setShowOnlyActive(v){
+  showOnlyActive=v;
+  renderList();
 }
 
 function renderList(){
   var urgentCount=allOrders.filter(function(o){return getDaysLeft(o.estimatedDate)<=1}).length;
   var warningCount=allOrders.filter(function(o){var d=getDaysLeft(o.estimatedDate);return d>1&&d<=3}).length;
-  
-  var h='<div class="header" style="display:flex;align-items:center;justify-content:space-between"><div class="page-title">跟单中心</div><a href="/order-pro-a" style="background:#007aff;color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none">+ 新增订单</a><div style="font-size:16px;cursor:pointer;margin-left:12px" onclick="location.reload()">刷新</div></div>';
-  
+
+  var h='<div class="header" style="display:flex;align-items:center;justify-content:space-between">';
+  h+='<div class="page-title">跟单中心</div>';
+  h+='<a href="/order-pro-a" style="background:#007aff;color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none">+ 新增订单</a>';
+  h+='<div style="font-size:16px;cursor:pointer;margin-left:12px" onclick="location.reload()">刷新</div>';
+  h+='</div>';
+
   h+='<div class="stats">';
   h+='<div class="stat"><div class="stat-value">'+(urgentCount||0)+'</div><div class="stat-label">紧急</div></div>';
   h+='<div class="stat"><div class="stat-value">'+(warningCount||0)+'</div><div class="stat-label">即将到期</div></div>';
   h+='<div class="stat"><div class="stat-value">'+allOrders.length+'</div><div class="stat-label">全部</div></div>';
   h+='<div class="stat"><div class="stat-value">0</div><div class="stat-label">今日交货</div></div>';
   h+='</div>';
-      }
-  
+
   h+='<div class="list"><div class="list-title">订单列表</div>';
-  
+
   var filteredOrders=showOnlyActive?allOrders.filter(function(o){return !o.isCompleted&&!o.isPaused}):allOrders;
-    if(filteredOrders.length===0){
+
+  if(filteredOrders.length===0){
     h+='<div class="empty"><div class="empty-icon">📋</div>暂无订单<br><br><a href="/order-pro-a" style="color:#007aff">点击录入新订单</a></div>';
   } else {
     filteredOrders.forEach(function(o,i){
@@ -123,66 +106,64 @@ function renderList(){
       var daysClass=days<=0?'danger':(days<=3?'warning':'');
       h+='<div class="order-card" data-idx="'+i+'">';
       h+='<div class="order-top">';
-      h+='<div><div class="order-num">'+o.orderNumber+'</div><div class="order-customer">'+(o.customerName||'客户')+'</div></div>';
+      h+='<div><div class="order-num">'+escapeHtml(o.orderNumber)+'</div><div class="order-customer">'+escapeHtml(o.customerName||'客户')+'</div></div>';
       h+='<div class="order-days '+daysClass+'">'+days+'天</div>';
       h+='</div>';
-      }
-      h+='<div class="order-info">'+(o.productName||'')+' | '+o.currentStep+'</div>';
+      h+='<div class="order-info">'+(o.productName||'')+' | '+escapeHtml(o.currentStep)+'</div>';
       h+='</div>';
-      }
     });
   }
-  
-  h+='</div>';
-      }
+
+  h+='</div></div>';
   document.getElementById('app').innerHTML=h;
 }
 
 function showDetail(idx){
   var o=allOrders[idx];
   if(!o) return;
-  var currentStepIdx=(o.stepNum||1)-1;
+  currentDetailIdx=idx;
+
+  var steps=getStepsForOrder(o);
+  var currentStepIdx=getStepIndex(o.currentStep, steps);
+  if(currentStepIdx<0) currentStepIdx=0;
+
   var trackUrl='http://120.79.180.199:3000/track/'+o.orderNumber;
-  
+
   var h='<div class="detail-header">';
   h+='<div class="detail-back" data-action="back">← 返回列表</div>';
-  h+='<div class="detail-num">'+o.orderNumber+'</div>';
-  h+='<div class="detail-info">'+(o.customerName||'客户')+' | '+o.currentStep+' | 剩余'+getDaysLeft(o.estimatedDate)+'天</div>';
+  h+='<div class="detail-num">'+escapeHtml(o.orderNumber)+'</div>';
+  h+='<div class="detail-info">'+escapeHtml(o.customerName||'客户')+' | '+escapeHtml(o.currentStep)+' | 剩余'+getDaysLeft(o.estimatedDate)+'天</div>';
   h+='</div>';
-      }
-  
+
   h+='<div class="step-list"><div class="list-title">生产工序</div>';
-  
-  for(var i=0;i<STEPS.length;i++){
+
+  for(var i=0;i<steps.length;i++){
     var done=i<currentStepIdx;
     var active=i===currentStepIdx;
     var cls='step-item'+(done?' done':'')+(active?' active':'');
     h+='<div class="'+cls+'">';
     h+='<div class="step-row">';
     h+='<div class="step-num">'+(done?'✓':(i+1))+'</div>';
-    h+='<div class="step-name">'+STEPS[i]+'</div>';
-    var statusText = done?'已完成':(active?'进行中':'待完成');
-      if(done && stepCompletedTimes[currentDetailIdx+'_'+i]){
-        statusText += ' '+stepCompletedTimes[currentDetailIdx+'_'+i];
-      }
-      h+='<div class="step-status">'+statusText+'</div>';
+    h+='<div class="step-name">'+steps[i]+'</div>';
+    var statusText=done?'已完成':(active?'进行中':'待完成');
+    if(done && stepCompletedTimes[currentDetailIdx+'_'+i]){
+      statusText+=' '+stepCompletedTimes[currentDetailIdx+'_'+i];
+    }
+    h+='<div class="step-status">'+statusText+'</div>';
     h+='</div>';
-      }
-    
+
     if(active){
       h+='<div class="step-content" style="padding:0 14px 14px">';
       h+='<textarea class="remark-input" rows="2" placeholder="备注（可选）" id="remarkInput"></textarea>';
       h+='<button type="button" class="confirm-btn" id="confirmBtn" data-step="'+i+'">确认完成</button>';
       h+='<div id="msgBox" class="msg-box" style="display:none"></div>';
       h+='</div>';
-      }
     }
     h+='</div>';
-      }
   }
+
   h+='</div>';
-      }
-  
+
   h+='<div class="share-box">';
   h+='<div class="share-title">分享给客户</div>';
   h+='<div class="share-desc">客户可实时查看订单进度</div>';
@@ -190,10 +171,8 @@ function showDetail(idx){
   h+='<div class="share-url">'+trackUrl+'</div>';
   h+='<button type="button" class="copy-btn" id="copyBtn" data-url="'+trackUrl+'">复制</button>';
   h+='</div>';
-      }
   h+='</div>';
-      }
-  
+
   document.getElementById('app').innerHTML=h;
 }
 
@@ -218,21 +197,22 @@ function copyLink(url){
   document.body.removeChild(input);
 }
 
-function doConfirm(idx){
+function doConfirm(stepIdx){
   if(!confirm('确认完成这道工序？')) return;
   var o=allOrders[currentDetailIdx];
   if(!o) return;
   var btn=document.getElementById('confirmBtn');
   var msgBox=document.getElementById('msgBox');
   if(!btn) return;
-  
+
+  var steps=getStepsForOrder(o);
+
   btn.disabled=true;
   btn.textContent='处理中...';
-  showMsg('提交中...','info');
-  
+
   fetch('/api/complete_step',{
     method:'POST',
-    body:JSON.stringify({recordId:o.recordId,stepName:STEPS[idx],stepNum:idx+1}),
+    body:JSON.stringify({recordId:o.recordId,stepName:steps[stepIdx],stepNum:stepIdx+1}),
     headers:{'Content-Type':'application/json'}
   })
   .then(function(r){return r.json()})
@@ -240,68 +220,59 @@ function doConfirm(idx){
     if(data.success){
       btn.textContent='已完成';
       btn.style.background='#22c55e';
-      // Store completion time
-      var t = new Date();
-      var timeStr = formatTime(t);
-      stepCompletedTimes[currentDetailIdx+'_'+idx] = timeStr;
-      var now = new Date();
-      var timeStr = formatTime(now);
-      var msgBox = document.getElementById('msgBox');
-      if(msgBox){ msgBox.textContent='✓ '+STEPS[idx]+' 已完成于 '+timeStr; msgBox.className='msg-box success'; msgBox.style.display='block'; }
-      // Update local stepNum so next step shows
-      if(allOrders[currentDetailIdx]){
-        allOrders[currentDetailIdx].stepNum = idx + 2; // +1 for 1-based, +1 for next
-        allOrders[currentDetailIdx].currentStep = STEPS[idx+1] || '已完工';
+      var now=new Date();
+      var timeStr=formatTime(now);
+      stepCompletedTimes[currentDetailIdx+'_'+stepIdx]=timeStr;
+      var newMsgBox=document.getElementById('msgBox');
+      if(newMsgBox){
+        newMsgBox.textContent='✓ '+steps[stepIdx]+' 已完成于 '+timeStr;
+        newMsgBox.className='msg-box success';
+        newMsgBox.style.display='block';
       }
-      // Re-render to show next step as active
-      setTimeout(function(){ showDetail(currentDetailIdx); }, 800);
+      if(allOrders[currentDetailIdx]){
+        allOrders[currentDetailIdx].stepNum=stepIdx+2;
+        allOrders[currentDetailIdx].currentStep=steps[stepIdx+1]||'已完工';
+      }
+      setTimeout(function(){showDetail(currentDetailIdx);},800);
     } else {
       btn.disabled=false;
       btn.textContent='确认完成';
-      showMsg('操作失败：'+(data.message||'请稍后重试'), 'error');
+      var newMsgBox=document.getElementById('msgBox');
+      if(newMsgBox){newMsgBox.textContent='操作失败：'+(data.message||'请稍后重试');newMsgBox.className='msg-box error';newMsgBox.style.display='block';}
     }
   })
   .catch(function(e){
     btn.disabled=false;
     btn.textContent='确认完成';
-    showMsg('网络开小差，请重试~', 'error');
+    var newMsgBox=document.getElementById('msgBox');
+    if(newMsgBox){newMsgBox.textContent='网络开小差，请重试~';newMsgBox.className='msg-box error';newMsgBox.style.display='block';}
   });
 }
 
-function showMsg(text, type){
-  var msgBox=document.getElementById('msgBox');
-  if(!msgBox) return;
-  msgBox.textContent=text;
-  msgBox.className='msg-box '+(type||'');
-  msgBox.style.display='block';
+function init(){
+  fetch('/api/orders')
+    .then(function(r){return r.json()})
+    .then(function(data){
+      allOrders=data.orders||[];
+      renderList();
+    })
+    .catch(function(){
+      allOrders=[];
+      renderList();
+    });
 }
 
-var currentDetailIdx=0;
-var collapsedSteps={};
-function toggleStep(idx){
-  collapsedSteps[idx]=!collapsedSteps[idx];
-  var item=document.querySelector('.step-item[data-idx=\"'+idx+'\"]');
-  if(item){
-    var content=item.querySelector('.step-content');
-    if(content) content.style.display=collapsedSteps[idx]?'none':'block';
-  }
-}
-
-// Event delegation for reliable click handling
-document.addEventListener('click', function(e){
+document.addEventListener('click',function(e){
   var target=e.target;
-  
-  // Order card click
-  if(target.classList && target.classList.contains('order-card')){
+
+  if(target.classList&&target.classList.contains('order-card')){
     var idx=parseInt(target.getAttribute('data-idx'));
     if(!isNaN(idx)){
-      currentDetailIdx=idx;
       showDetail(idx);
     }
     return;
   }
-  
-  // Confirm button
+
   if(target.id==='confirmBtn'){
     var stepIdx=parseInt(target.getAttribute('data-step'));
     if(!isNaN(stepIdx)){
@@ -309,16 +280,14 @@ document.addEventListener('click', function(e){
     }
     return;
   }
-  
-  // Copy button
+
   if(target.id==='copyBtn'){
     var url=target.getAttribute('data-url');
     if(url) copyLink(url);
     return;
   }
-  
-  // Back button
-  if(target.classList && target.classList.contains('detail-back')){
+
+  if(target.classList&&target.classList.contains('detail-back')){
     renderList();
     return;
   }

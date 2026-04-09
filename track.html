@@ -41,6 +41,7 @@
 .step.active .step-time{color:#007aff}
 .watermark{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:48px;color:rgba(0,0,0,0.04);font-weight:700;pointer-events:none;white-space:nowrap;z-index:0;user-select:none}
 .footer{text-align:center;color:#86868b;font-size:13px;padding:24px}
+.loading{text-align:center;padding:60px;color:#86868b}
 </style>
 </head>
 <body>
@@ -51,14 +52,17 @@
 <div class="loading">正在加载...</div>
 </div>
 
-<div class="footer"><div style="margin-top:16px"><a href="tel:跟单员" style="display:inline-block;background:#007aff;color:#fff;padding:12px 24px;border-radius:12px;font-size:16px;text-decoration:none">有问题？联系跟单员</a></div></div>
+<div class="footer">
+<div style="margin-top:16px">
+<a href="tel:跟单员" style="display:inline-block;background:#007aff;color:#fff;padding:12px 24px;border-radius:12px;font-size:16px;text-decoration:none">有问题？联系跟单员</a>
+</div>
+</div>
 <div class="watermark">www.buttonhs.com</div>
 </div>
 </div>
 
+<script src="shared.js"></script>
 <script>
-var STEPS=['接单','调色','制胚','切胚','甩干','筛胚','初检','车钮','抛光','终检','包装','出货'];
-
 function getOrderId(){
   var path=window.location.pathname;
   return path.split('/').pop() || 'ORD20260407001';
@@ -89,52 +93,55 @@ function getMock(){
 }
 
 function renderOrder(o){
-  var idx=o.currentStepIdx>=0?o.currentStepIdx:STEPS.indexOf(o.currentStep);
+  var steps=getStepsForOrder(o);
+  var idx=o.currentStepIdx>=0?o.currentStepIdx:getStepIndex(o.currentStep, steps);
   if(idx<0)idx=0;
-  var pct=Math.round(idx/STEPS.length*100);
+  var pct=Math.round((idx/steps.length)*100);
   var days=Math.ceil((new Date(o.deliveryDate)-new Date())/(1000*60*60*24));
   var t=o.stepTimes||{};
-  
+
   var h='';
   h+='<div class="countdown-card">';
   h+='<div class="countdown-days">'+Math.abs(days)+'<span class="countdown-unit">天</span></div>';
   h+='<div class="countdown-label">距约定交货 '+o.deliveryDate+'</div>';
   h+='<div class="countdown-bar"><div class="countdown-bar-fill" style="width:'+pct+'%"></div></div>';
   h+='</div>';
-  
+
   h+='<div class="status-card">';
   h+='<div class="status-label">当前工序</div>';
-  h+='<div class="status-value">'+o.currentStep+'</div>';
-  h+='<div class="status-sub">已完成 '+idx+' / '+STEPS.length+' 工序，进度 '+pct+'%</div>';
+  h+='<div class="status-value">'+escapeHtml(o.currentStep)+'</div>';
+  h+='<div class="status-sub">已完成 '+idx+' / '+steps.length+' 工序，进度 '+pct+'%</div>';
   h+='</div>';
-  
+
   h+='<div class="info-card">';
   h+='<div class="info-header">订单信息</div>';
-  h+='<div class="info-row"><span class="info-label">订单编号</span><span class="info-value">'+o.orderNumber+'</span></div>';
-  h+='<div class="info-row"><span class="info-label">客户名称</span><span class="info-value">'+o.customerName+'</span></div>';
-  h+='<div class="info-row"><span class="info-label">产品规格</span><span class="info-value">'+o.productName+'</span></div>';
-  h+='<div class="info-row"><span class="info-label">颜色要求</span><span class="info-value">'+(o.color||'-')+'</span></div>';
-  h+='<div class="info-row"><span class="info-label">订购数量</span><span class="info-value">'+o.quantity+' '+o.unit+'</span></div>';
+  h+='<div class="info-row"><span class="info-label">订单编号</span><span class="info-value">'+escapeHtml(o.orderNumber)+'</span></div>';
+  h+='<div class="info-row"><span class="info-label">客户名称</span><span class="info-value">'+escapeHtml(o.customerName)+'</span></div>';
+  h+='<div class="info-row"><span class="info-label">产品规格</span><span class="info-value">'+escapeHtml(o.productName)+'</span></div>';
+  h+='<div class="info-row"><span class="info-label">颜色要求</span><span class="info-value">'+(o.color?'-':escapeHtml(o.color))+'</span></div>';
+  h+='<div class="info-row"><span class="info-label">订购数量</span><span class="info-value">'+escapeHtml(o.quantity)+' '+escapeHtml(o.unit)+'</span></div>';
   h+='</div>';
-  
+
   h+='<div class="steps-card">';
   h+='<div class="steps-header">';
   h+='<div class="steps-title">生产进度</div>';
-  h+='<div class="steps-count">'+idx+'/'+STEPS.length+' 工序完成</div>';
+  h+='<div class="steps-count">'+idx+'/'+steps.length+' 工序完成</div>';
   h+='</div>';
-  for(var i=0;i<STEPS.length;i++){
-    var sn=STEPS[i];
+
+  for(var i=0;i<steps.length;i++){
+    var sn=steps[i];
     var st=t[sn];
     var cls='step';
     if(i<idx)cls+=' done';else if(i===idx)cls+=' active';else cls+=' future';
     h+='<div class="'+cls+'">';
-    h+='<div class="step-dot">'+(i<idx?'V':(i+1))+'</div>';
+    h+='<div class="step-dot">'+(i<idx?'✓':(i+1))+'</div>';
     h+='<div class="step-name">'+sn+'</div>';
     h+='<div class="step-time">'+(st||(i===idx?'进行中':'-'))+'</div>';
     h+='</div>';
   }
+
   h+='</div>';
-  
+
   document.getElementById('content').innerHTML=h;
 }
 
