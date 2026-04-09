@@ -102,7 +102,7 @@ function renderList(){
   var urgentCount=allOrders.filter(function(o){return getDaysLeft(o.estimatedDate)<=1}).length;
   var warningCount=allOrders.filter(function(o){var d=getDaysLeft(o.estimatedDate);return d>1&&d<=3}).length;
   
-  var h='<div class="header"><div class="page-title">跟单中心</div><div style="position:absolute;right:16px;top:16px;font-size:20px;cursor:pointer" onclick="location.reload()">刷新</div></div>';
+  var h='<div class="header" style="display:flex;align-items:center;justify-content:space-between"><div class="page-title">跟单中心</div><a href="/order-pro-a" style="background:#007aff;color:#fff;padding:8px 16px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none">+ 新增订单</a><div style="font-size:16px;cursor:pointer;margin-left:12px" onclick="location.reload()">刷新</div></div>';
   
   h+='<div class="stats">';
   h+='<div class="stat"><div class="stat-value">'+(urgentCount||0)+'</div><div class="stat-label">紧急</div></div>';
