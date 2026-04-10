@@ -334,37 +334,15 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
 
 <script src="shared.js"></script>
 <script>
-var FS_APP_TOKEN = 'ZXaCbhbaOaUylfsznlRcICJSnMh';
-var FS_APP_ID = 'cli_a94bdf0fc3b89bb7';
-var FS_APP_SECRET = 'p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
 var FS_PROD_TABLE = 'tblulFnP5TbawnY1';
 var FS_INV_TABLE = 'tbljcHJOCAMHfPdx';
-var fsAccessToken = null;
 var orders = [];
 var inventoryData = [];
 var currentKanbanFilter = 'all';
 
-async function getFeishuToken() {
-  if (fsAccessToken) return fsAccessToken;
-  try {
-    var r = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({app_id:FS_APP_ID, app_secret:FS_APP_SECRET})
-    });
-    var d = await r.json();
-    if (d.tenant_access_token) fsAccessToken = d.tenant_access_token;
-  } catch(e) {}
-  return fsAccessToken;
-}
-
 async function loadOrders() {
-  var token = await getFeishuToken();
-  if (!token) return;
   try {
-    var r = await fetch(
-      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_PROD_TABLE + '/records?page_size=100',
-      { headers:{Authorization:'Bearer '+token} }
-    );
+    var r = await fetch('/api/prod_orders');
     var d = await r.json();
     if (d.data && d.data.items) {
       orders = d.data.items.map(function(item) {
@@ -512,13 +490,8 @@ function closeModal() {
 
 // INVENTORY
 async function loadInventory() {
-  var token = await getFeishuToken();
-  if (!token) return;
   try {
-    var r = await fetch(
-      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_INV_TABLE + '/records?page_size=100',
-      { headers:{Authorization:'Bearer '+token} }
-    );
+    var r = await fetch('/api/inventory');
     var d = await r.json();
     if (d.data && d.data.items) {
       var latest = {};

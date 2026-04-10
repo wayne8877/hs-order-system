@@ -237,13 +237,9 @@ body {font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background
 // ============================================================
 // 配置
 // ============================================================
-var FS_APP_TOKEN    = 'ZXaCbhbaOaUylfsznlRcICJSnMh';
-var FS_APP_ID       = 'cli_a94bdf0fc3b89bb7';
-var FS_APP_SECRET   = 'p8QsSAq2zb8dVazJkE487gXkFVQx3Mr3';
 var FS_CUST_TABLE   = 'tblMqxTf98wrJRo3';
 var FS_PROD_TABLE   = 'tblabu9EcSNhQWzg';
 var FS_ORDER_TABLE  = 'tbl5h2tvRGJ86POP';
-var fsAccessToken   = null;
 
 // ============================================================
 // 数据
@@ -263,28 +259,9 @@ async function init() {
   addProduct();
 }
 
-async function getFeishuToken() {
-  if (fsAccessToken) return fsAccessToken;
-  try {
-    var r = await fetch('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({app_id: FS_APP_ID, app_secret: FS_APP_SECRET})
-    });
-    var d = await r.json();
-    if (d.tenant_access_token) fsAccessToken = d.tenant_access_token;
-  } catch(e) {}
-  return fsAccessToken;
-}
-
 async function loadCustomers() {
-  var token = await getFeishuToken();
-  if (!token) return;
   try {
-    var r = await fetch(
-      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_CUST_TABLE + '/records?page_size=100',
-      { headers: {Authorization: 'Bearer ' + token} }
-    );
+    var r = await fetch('/api/customers');
     var d = await r.json();
     if (d.data && d.data.items) {
       customers = d.data.items.map(function(item) {
@@ -296,13 +273,8 @@ async function loadCustomers() {
 }
 
 async function loadProducts() {
-  var token = await getFeishuToken();
-  if (!token) return;
   try {
-    var r = await fetch(
-      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_PROD_TABLE + '/records?page_size=100',
-      { headers: {Authorization: 'Bearer ' + token} }
-    );
+    var r = await fetch('/api/products');
     var d = await r.json();
     if (d.data && d.data.items) {
       products = d.data.items.map(function(item) {
@@ -318,13 +290,8 @@ async function loadProducts() {
 }
 
 async function loadOrders() {
-  var token = await getFeishuToken();
-  if (!token) return;
   try {
-    var r = await fetch(
-      'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_ORDER_TABLE + '/records?page_size=200',
-      { headers: {Authorization: 'Bearer ' + token} }
-    );
+    var r = await fetch('/api/orders');
     var d = await r.json();
     if (d.data && d.data.items) {
       orders = d.data.items.map(function(item) {
@@ -626,23 +593,22 @@ async function submitOrder() {
     btn.disabled = false; btn.textContent = '保存'; return;
   }
 
-  var token = await getFeishuToken();
-  if (!token) { showToast('飞书连接失败', 'error'); btn.disabled = false; btn.textContent = '保存'; return; }
-
   var created = 0;
   for (var i = 0; i < validRows.length; i++) {
     var row = validRows[i];
-    var fields = {
-      '客户编号': {link: [{type: 'bitable', table_id: FS_CUST_TABLE, record_id: customerId}]},
-      '数量': parseInt(row.qty) || 0,
-      '要求交货时间': new Date(row.date).getTime(),
-      '签约日期': Date.now()
+    var payload = {
+      customerId: customerId,
+      productId: row.prodId,
+      quantity: parseInt(row.qty) || 0,
+      deliveryDate: new Date(row.date).getTime(),
+      signDate: Date.now()
     };
     try {
-      var r = await fetch(
-        'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FS_APP_TOKEN + '/tables/' + FS_ORDER_TABLE + '/records',
-        { method: 'POST', headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}, body: JSON.stringify({fields: fields}) }
-      );
+      var r = await fetch('/api/create_order', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      });
       var d = await r.json();
       if (d.code === 0) created++;
     } catch(e) { console.error('创建订单失败', e); }
