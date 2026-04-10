@@ -20,6 +20,29 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// 路由映射：URL路径 → 对应HTML文件
+const routeMap = {
+  '/dashboard': 'dashboard.html',
+  '/order-pro-a': 'order-pro-a.html',
+  '/order-pro': 'order-pro-a.html',
+  '/process': 'processCenter.html',
+  '/processCenter': 'processCenter.html',
+  '/customer-track': 'customer-track.html',
+  '/customer_track': 'customer-track.html',
+  '/track': 'track.html',
+  '/app': 'app.html',
+};
+
+// 通用路由：检查 routeMap，没有就加 .html 后缀
+app.get('/:page', (req, res, next) => {
+  const page = '/' + req.params.page;
+  let file = routeMap[page] || (page + '.html');
+  const filePath = path.join(__dirname, file);
+  res.sendFile(filePath, (err) => {
+    if (err) next();
+  });
+});
+
 // ========== 飞书配置 ==========
 const FS_APP_TOKEN = process.env.FS_APP_TOKEN || 'ZXaCbhbaOaUylfsznlRcICJSnMh';
 const FS_APP_ID = process.env.FS_APP_ID || 'cli_a94bdf0fc3b89bb7';
