@@ -496,7 +496,7 @@ function renderKanban(containerId) {
   if (currentKanbanFilter === 'producing') filtered = orders.filter(function(o){ return !o.isCompleted; });
   else if (currentKanbanFilter === 'done') filtered = orders.filter(function(o){ return o.isCompleted; });
   else filtered = orders;
-  filtered.sort(function(a,b){ if(a.isUrgent&&!bisUrgent&&b.isUrgent) return 1; return (a.estimatedDate||'').localeCompare(b.estimatedDate||''); });
+  filtered.sort(function(a,b){ if(a.isUrgent&&!b.isUrgent) return -1; if(!a.isUrgent&&b.isUrgent) return 1; return (a.estimatedDate||'').localeCompare(b.estimatedDate||''); });
   if (filtered.length === 0) { container.innerHTML = '<div class="empty">' + (currentKanbanFilter==='done'?'暂无已完成订单':'暂无订单') + '</div>'; return; }
   var html = '';
   filtered.forEach(function(o) {
