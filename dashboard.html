@@ -6,168 +6,181 @@
 <title>合盛跟单中心</title>
 <style>
 :root {
-  --bg: #0D0D0D;
-  --surface-1: #111111;
-  --surface-2: #161616;
-  --surface-3: #1C1C1C;
-  --surface-4: #222222;
-  --border: rgba(255,255,255,0.06);
-  --border-hover: rgba(255,255,255,0.1);
-  --text-primary: #FFFFFF;
-  --text-secondary: #8A8A8A;
-  --text-tertiary: #525252;
-  --accent: #5E6AD2;
-  --green: #2DA94E;
-  --green-bg: rgba(45,169,78,0.1);
-  --red: #F23D3D;
-  --red-bg: rgba(242,61,61,0.1);
-  --amber: #F59E0B;
-  --amber-bg: rgba(245,158,11,0.1);
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --font: 'Inter','-apple-system','system-ui',sans-serif;
-  --transition: 150ms ease;
+  --bg: #f5f0ea;
+  --surface: #ffffff;
+  --surface-2: #faf8f5;
+  --surface-3: #f0ebe4;
+  --border: #e8e0d5;
+  --border-hover: #d4c9b8;
+  --text-primary: #1a1614;
+  --text-secondary: #6b5f52;
+  --text-tertiary: #a89b8c;
+  --accent: #c07d4a;
+  --accent-light: #f5e8d8;
+  --green: #4a8c5e;
+  --green-light: #e8f3eb;
+  --red: #c0524a;
+  --red-light: #f8e8e7;
+  --amber: #c0894a;
+  --amber-light: #f8f0e3;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --shadow: 0 2px 12px rgba(26,22,20,0.06);
+  --shadow-lg: 0 8px 32px rgba(26,22,20,0.10);
+  --font: 'PingFang SC', 'SF Pro Display', -apple-system, sans-serif;
+  --transition: 200ms ease;
 }
 * {margin:0;padding:0;box-sizing:border-box}
-html,body {height:100%;overflow:hidden}
-body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--text-primary);height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--font);background:var(--bg);color:var(--text-primary);height:100vh;display:flex}
 
 /* Layout */
-.app {display:flex;height:100vh;overflow:hidden}
-.sidebar {width:220px;background:var(--surface-1);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
-.sidebar-top {padding:16px 14px 12px;border-bottom:1px solid var(--border)}
-.sidebar-brand {font-size:14px;font-weight:600;letter-spacing:-0.01em}
-.sidebar-sub {font-size:12px;color:var(--text-tertiary);margin-top:2px}
-.nav-section {padding:8px 8px 4px}
-.nav-label {font-size:11px;font-weight:500;color:var(--text-tertiary);padding:4px 6px 6px;letter-spacing:0.04em;text-transform:uppercase}
-.nav-item {display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-secondary);font-size:13px;transition:all var(--transition);margin-bottom:1px}
-.nav-item:hover {background:var(--surface-2);color:var(--text-primary)}
-.nav-item.active {background:var(--surface-3);color:var(--text-primary)}
-.nav-icon {width:16px;height:16px;opacity:0.7;flex-shrink:0}
-.nav-item.active .nav-icon {opacity:1}
-.nav-badge {margin-left:auto;background:var(--surface-4);color:var(--text-tertiary);font-size:11px;padding:1px 6px;border-radius:10px;min-width:20px;text-align:center}
-.nav-badge.red {background:var(--red-bg);color:var(--red)}
-.sidebar-bottom {margin-top:auto;padding:12px 8px;border-top:1px solid var(--border)}
-.sidebar-user {display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:var(--radius-sm)}
-.sidebar-avatar {width:24px;height:24px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff}
-.sidebar-user-name {font-size:13px}
+.sidebar{width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+.sidebar-top{padding:28px 20px 20px;border-bottom:1px solid var(--border)}
+.sidebar-brand{font-size:18px;font-weight:700;color:var(--text-primary);letter-spacing:-0.02em}
+.sidebar-sub{font-size:12px;color:var(--text-tertiary);margin-top:3px}
+.nav-section{padding:16px 10px 8px}
+.nav-label{font-size:10px;font-weight:600;color:var(--text-tertiary);padding:0 10px 8px;letter-spacing:0.08em;text-transform:uppercase}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-secondary);font-size:14px;transition:all var(--transition);margin-bottom:2px}
+.nav-item:hover{background:var(--surface-2);color:var(--text-primary)}
+.nav-item.active{background:var(--accent-light);color:var(--accent);font-weight:600}
+.nav-item.active svg{opacity:1}
+.nav-icon{width:18px;height:18px;opacity:0.5;flex-shrink:0}
+.nav-item.active .nav-icon{opacity:1}
+.nav-badge{margin-left:auto;background:var(--surface-3);color:var(--text-tertiary);font-size:11px;padding:2px 7px;border-radius:10px;min-width:22px;text-align:center}
+.nav-badge.red{background:var(--red-light);color:var(--red)}
+.nav-badge.green{background:var(--green-light);color:var(--green)}
+.sidebar-bottom{margin-top:auto;padding:16px 10px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm)}
+.sidebar-avatar{width:28px;height:28px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sidebar-user-name{font-size:14px;color:var(--text-primary)}
 
-.main {flex:1;display:flex;flex-direction:column;min-width:0}
-
-/* Topbar */
-.topbar {height:48px;background:var(--surface-1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0}
-.topbar-title {font-size:14px;font-weight:600}
-.topbar-right {display:flex;align-items:center;gap:12px}
-.topbar-sync {font-size:12px;color:var(--text-tertiary)}
-.topbar-time {font-size:20px;font-weight:400;color:var(--text-primary);letter-spacing:-0.02em}
-
-/* Content */
-.content {flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px}
-.content::-webkit-scrollbar {width:4px}
-.content::-webkit-scrollbar-thumb {background:var(--surface-4);border-radius:2px}
-.page {display:none;flex-direction:column;gap:16px}
-.page.active {display:flex}
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:64px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;flex-shrink:0}
+.topbar-title{font-size:17px;font-weight:600;color:var(--text-primary)}
+.topbar-right{display:flex;align-items:center;gap:20px}
+.topbar-sync{font-size:12px;color:var(--text-tertiary)}
+.topbar-time{font-size:24px;font-weight:300;color:var(--text-secondary);letter-spacing:-0.02em}
+.topbar-date{font-size:12px;color:var(--text-tertiary);text-align:right;line-height:1.3}
+.content{flex:1;overflow-y:auto;padding:28px 32px;display:flex;flex-direction:column;gap:24px}
+.content::-webkit-scrollbar{width:5px}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.page{display:none;flex-direction:column;gap:24px}
+.page.active{display:flex}
 
 /* Stats */
-.stats-grid {display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.stat-card {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 16px;cursor:pointer;transition:all var(--transition)}
-.stat-card:hover {border-color:var(--border-hover)}
-.stat-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.stat-label {font-size:11px;color:var(--text-tertiary);font-weight:500;letter-spacing:0.04em;text-transform:uppercase}
-.stat-value {font-size:28px;font-weight:600;letter-spacing:-0.03em;line-height:1}
-.stat-card.red .stat-value {color:var(--red)}
-.stat-card.green .stat-value {color:var(--green)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;box-shadow:var(--shadow);transition:all var(--transition);cursor:pointer}
+.stat-card:hover{border-color:var(--border-hover);box-shadow:var(--shadow-lg);transform:translateY(-2px)}
+.stat-label{font-size:11px;font-weight:600;color:var(--text-tertiary);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:12px}
+.stat-value{font-size:36px;font-weight:700;color:var(--text-primary);letter-spacing:-0.04em;line-height:1}
+.stat-sub{font-size:12px;color:var(--text-tertiary);margin-top:6px}
+.stat-card.accent{background:var(--accent);border-color:var(--accent)}
+.stat-card.accent .stat-label{color:rgba(255,255,255,0.7)}
+.stat-card.accent .stat-value{color:#fff}
+.stat-card.accent .stat-sub{color:rgba(255,255,255,0.7)}
+.stat-card.green .stat-value{color:var(--green)}
+.stat-card.red .stat-value{color:var(--red)}
 
 /* Panels */
-.panels {display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
-.panel {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;display:flex;flex-direction:column;min-height:0}
-.panel-header {display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-shrink:0}
-.panel-title {font-size:13px;font-weight:600}
-.panel-meta {font-size:12px;color:var(--text-tertiary)}
-.panel-body {flex:1;overflow-y:auto;min-height:120px}
-.panel-body::-webkit-scrollbar {width:3px}
-.panel-body::-webkit-scrollbar-thumb {background:var(--surface-4);border-radius:2px}
-.panel-full {grid-column:1/-1}
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.panel-header{display:flex;justify-content:space-between;align-items:center;padding:20px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-title{font-size:15px;font-weight:600;color:var(--text-primary)}
+.panel-meta{font-size:12px;color:var(--text-tertiary)}
+.panel-body{flex:1;overflow-y:auto;padding:12px 20px 20px;min-height:120px}
+.panel-body::-webkit-scrollbar{width:4px}
+.panel-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.panel-full{grid-column:1/-1}
 
 /* Emergency */
-.emergency-item {display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);background:var(--surface-2);margin-bottom:4px;cursor:pointer;transition:background var(--transition)}
-.emergency-item:hover {background:var(--surface-3)}
-.emergency-dot {width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0}
-.emergency-info {flex:1;min-width:0}
-.emergency-code {font-size:13px;font-weight:500;font-family:'SF Mono','Menlo',monospace}
-.emergency-meta {font-size:11px;color:var(--text-tertiary);margin-top:1px}
-.emergency-days {font-size:12px;font-weight:600;color:var(--red);white-space:nowrap}
+.emergency-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--radius-md);background:var(--surface-2);margin-bottom:8px;cursor:pointer;transition:all var(--transition);border:1px solid transparent}
+.emergency-item:hover{border-color:var(--border);background:var(--surface)}
+.emergency-item.red{border-color:var(--red-light);background:var(--red-light)}
+.emergency-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
+.emergency-info{flex:1;min-width:0}
+.emergency-code{font-size:14px;font-weight:600;font-family:'SF Mono',monospace;color:var(--text-primary)}
+.emergency-meta{font-size:12px;color:var(--text-tertiary);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emergency-days{font-size:12px;font-weight:600;color:var(--red);white-space:nowrap;padding:3px 10px;background:var(--red-light);border-radius:20px}
 
-/* Step progress */
-.step-list {display:flex;flex-direction:column;gap:6px}
-.step-row {display:flex;align-items:center;gap:10px}
-.step-name {font-size:12px;color:var(--text-secondary);width:60px;flex-shrink:0}
-.step-bar {flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
-.step-fill {height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
-.step-count {font-size:11px;color:var(--text-tertiary);width:30px;text-align:right;flex-shrink:0}
+/* Step */
+.step-list{display:flex;flex-direction:column;gap:10px}
+.step-row{display:flex;align-items:center;gap:10px}
+.step-name{font-size:12px;color:var(--text-secondary);width:64px;flex-shrink:0}
+.step-bar{flex:1;height:6px;background:var(--surface-3);border-radius:3px;overflow:hidden}
+.step-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .5s ease}
+.step-count{font-size:11px;color:var(--text-tertiary);width:28px;text-align:right;flex-shrink:0}
 
 /* Kanban */
-.kanban-filters {display:flex;gap:6px;margin-bottom:14px}
-.kb-tab {padding:5px 12px;border-radius:20px;font-size:12px;color:var(--text-secondary);background:none;border:1px solid transparent;cursor:pointer;transition:all var(--transition)}
-.kb-tab:hover {color:var(--text-primary);background:var(--surface-2)}
-.kb-tab.active {background:var(--surface-3);border-color:var(--border);color:var(--text-primary)}
-.kanban-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
-.kb-card {background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;cursor:pointer;transition:all var(--transition)}
-.kb-card:hover {border-color:var(--border-hover);background:var(--surface-3)}
-.kb-top {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.kb-num {font-size:13px;font-weight:600;font-family:'SF Mono','Menlo',monospace}
-.kb-status {font-size:11px;font-weight:500;padding:2px 7px;border-radius:10px}
-.kb-status.urgent {background:var(--red-bg);color:var(--red)}
-.kb-status.producing {background:var(--amber-bg);color:var(--amber)}
-.kb-status.done {background:var(--green-bg);color:var(--green)}
-.kb-customer {font-size:12px;color:var(--text-secondary);margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.kb-meta {display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-tertiary)}
-.kb-progress {flex:1;margin-right:10px}
-.kb-date {white-space:nowrap}
-.progress-bar {height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
-.progress-fill {height:100%;background:rgba(255,255,255,0.3);border-radius:2px;transition:width .3s}
+.kanban-filters{display:flex;gap:8px;margin-bottom:16px}
+.kb-tab{padding:6px 14px;border-radius:20px;font-size:13px;color:var(--text-secondary);background:none;border:1px solid transparent;cursor:pointer;transition:all var(--transition);font-family:var(--font)}
+.kb-tab:hover{color:var(--text-primary);background:var(--surface-2)}
+.kb-tab.active{background:var(--accent-light);border-color:var(--accent-light);color:var(--accent);font-weight:600}
+.kanban-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.kb-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 18px;cursor:pointer;transition:all var(--transition)}
+.kb-card:hover{border-color:var(--border-hover);box-shadow:var(--shadow);transform:translateY(-1px)}
+.kb-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+.kb-num{font-size:13px;font-weight:700;font-family:'SF Mono',monospace;color:var(--text-primary);letter-spacing:-0.01em}
+.kb-status{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;white-space:nowrap}
+.kb-status.urgent{background:var(--red-light);color:var(--red)}
+.kb-status.producing{background:var(--amber-light);color:var(--amber)}
+.kb-status.done{background:var(--green-light);color:var(--green)}
+.kb-status.pending{background:var(--surface-3);color:var(--text-tertiary)}
+.kb-product{font-size:13px;color:var(--text-secondary);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kb-meta{display:flex;justify-content:space-between;align-items:center}
+.kb-progress{flex:1;margin-right:10px}
+.kb-date{font-size:12px;color:var(--text-tertiary);white-space:nowrap}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s}
 
 /* Inventory */
-.inv-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
-.inv-card {background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px}
-.inv-top {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
-.inv-name {font-size:13px;font-weight:500}
-.inv-stock {font-size:22px;font-weight:600;letter-spacing:-0.03em}
-.inv-stock.ok {color:var(--green)}
-.inv-stock.warn {color:var(--amber)}
-.inv-stock.low {color:var(--red)}
-.inv-num {font-size:11px;color:var(--text-tertiary);margin-top:2px}
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.inv-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 18px;transition:all var(--transition)}
+.inv-card:hover{border-color:var(--border-hover)}
+.inv-name{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.inv-stock{font-size:28px;font-weight:700;letter-spacing:-0.03em}
+.inv-stock.ok{color:var(--green)}
+.inv-stock.warn{color:var(--amber)}
+.inv-stock.low{color:var(--red)}
+.inv-num{font-size:11px;color:var(--text-tertiary);margin-top:3px}
+
+/* Settings */
+.settings-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow)}
+.settings-row{display:flex;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);font-size:14px}
+.settings-row:last-child{border-bottom:none}
+.settings-key{color:var(--text-secondary)}
+.settings-val{color:var(--text-tertiary)}
+.settings-val.green{color:var(--green)}
 
 /* Empty */
-.empty {text-align:center;padding:24px 0;color:var(--text-tertiary);font-size:13px}
+.empty{text-align:center;padding:32px 0;color:var(--text-tertiary);font-size:13px}
 
 /* Modal */
-.modal {display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000;align-items:center;justify-content:center;padding:20px}
-.modal.show {display:flex}
-.modal-content {background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-lg);width:100%;max-width:420px;max-height:80vh;overflow-y:auto}
-.modal-header {padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-title {font-size:14px;font-weight:600}
-.modal-close {width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
-.modal-close:hover {background:var(--surface-3);color:var(--text-primary)}
-.modal-body {padding:16px 20px}
-.detail-row {display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
-.detail-row:last-child {border-bottom:none}
-.detail-label {font-size:13px;color:var(--text-tertiary)}
-.detail-value {font-size:13px;font-weight:500;text-align:right}
+.modal{display:none;position:fixed;inset:0;background:rgba(26,22,20,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal.show{display:flex}
+.modal-content{background:var(--surface);border-radius:var(--radius-lg);width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700;color:var(--text-primary)}
+.modal-close{width:28px;height:28px;border-radius:6px;background:none;border:none;color:var(--text-secondary);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--surface-2)}
+.modal-body{padding:20px 24px}
+.detail-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-label{font-size:13px;color:var(--text-secondary)}
+.detail-value{font-size:13px;font-weight:500;text-align:right}
+
+/* Tab bar */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 32px;background:var(--surface);flex-shrink:0}
+.tab-item{padding:18px 20px;font-size:14px;color:var(--text-secondary);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--transition);margin-bottom:-1px;font-weight:500}
+.tab-item:hover{color:var(--text-primary)}
+.tab-item.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
 
 /* Responsive */
-@media(max-width:1100px) {
-  .stats-grid {grid-template-columns:repeat(3,1fr)}
-  .panels {grid-template-columns:1fr}
-  .sidebar {width:180px}
-}
-@media(max-width:700px) {
-  .sidebar {display:none}
-  .stats-grid {grid-template-columns:repeat(2,1fr);gap:6px}
-  .stat-value {font-size:24px}
-  .content {padding:12px}
-}
+@media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}.panels{grid-template-columns:1fr}}
+@media(max-width:900px){.sidebar{width:200px}.content{padding:20px}}
+@media(max-width:700px){.sidebar{display:none}.tab-bar{padding:0 16px}.content{padding:16px}}
 </style>
 </head>
 <body>
@@ -182,29 +195,41 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
     <div class="nav-section">
       <div class="nav-label">工作台</div>
       <div class="nav-item active" id="nav-dashboard" onclick="switchPage('dashboard',this)">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".5"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="2" fill="currentColor"/><rect x="11" y="2" width="7" height="7" rx="2" fill="currentColor" opacity=".5"/><rect x="2" y="11" width="7" height="7" rx="2" fill="currentColor" opacity=".5"/><rect x="11" y="11" width="7" height="7" rx="2" fill="currentColor"/></svg>
         仪表盘
         <span class="nav-badge" id="navTotal">0</span>
       </div>
       <div class="nav-item" id="nav-kanban" onclick="switchPage('kanban',this)">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="4" height="12" rx="1" fill="currentColor"/><rect x="6" y="5" width="4" height="9" rx="1" fill="currentColor" opacity=".6"/><rect x="11" y="8" width="4" height="6" rx="1" fill="currentColor" opacity=".4"/></svg>
-        看板
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="5" height="14" rx="1.5" fill="currentColor"/><rect x="9" y="6" width="5" height="11" rx="1.5" fill="currentColor" opacity=".6"/><rect x="16" y="9" width="5" height="8" rx="1.5" fill="currentColor" opacity=".4"/></svg>
+        全部订单
         <span class="nav-badge" id="navProducing">0</span>
       </div>
-      <div class="nav-item" onclick="window.location.href='/app'">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="nav-item" onclick="window.location.href='/order-pro-a'">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><path d="M10 3v14M3 10h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         新增订单
       </div>
       <div class="nav-item" id="nav-inventory" onclick="switchPage('inventory',this)">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M5 4V3a1 1 0 012 0v1M9 4V3a1 1 0 012 0v1" stroke="currentColor" stroke-width="1.2"/></svg>
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 5V4a2 2 0 014 0v1M10 5V4a2 2 0 014 0v1" stroke="currentColor" stroke-width="1.5"/></svg>
         库存
         <span class="nav-badge" id="navInventory">-</span>
       </div>
     </div>
     <div class="nav-section">
+      <div class="nav-label">快捷</div>
+      <div class="nav-item" onclick="document.getElementById('emergencyList').scrollIntoView({behavior:'smooth'})">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><path d="M10 2L2 17h16L10 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M10 8v4M10 14h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        紧急订单
+        <span class="nav-badge red" id="navUrgent">0</span>
+      </div>
+      <div class="nav-item" onclick="window.location.href='/customer-track'">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><circle cx="8" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 17c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        客户查询
+      </div>
+    </div>
+    <div class="nav-section">
       <div class="nav-label">系统</div>
-      <div class="nav-item" id="nav-settings" onclick="switchPage('settings',this)">
-        <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M2.9 13.1l1.4-1.4M11.7 4.3l1.4-1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <div class="nav-item" onclick="switchPage('settings',this)">
+        <svg class="nav-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M3.9 3.9l1.4 1.4M14.7 14.7l1.4 1.4M3.9 16.1l1.4-1.4M14.7 5.3l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         设置
       </div>
     </div>
@@ -221,36 +246,48 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
     <div class="topbar">
       <div class="topbar-title" id="topbarTitle">仪表盘</div>
       <div class="topbar-right">
-        <div class="topbar-sync" id="syncTime">--:--:--</div>
-        <div class="topbar-time" id="headerTime">--:--</div>
+        <div class="topbar-sync" id="syncTime">--</div>
+        <div>
+          <div class="topbar-time" id="headerTime">--:--</div>
+          <div class="topbar-date" id="headerDate">--</div>
+        </div>
       </div>
     </div>
+
+    <div class="tab-bar">
+      <div class="tab-item active" onclick="switchTab('dashboard',this)">概览</div>
+      <div class="tab-item" onclick="switchTab('kanban',this)">全部订单</div>
+      <div class="tab-item" onclick="switchTab('inventory',this)">库存</div>
+      <div class="tab-item" onclick="switchTab('settings',this)">设置</div>
+    </div>
+
     <div class="content">
 
       <!-- DASHBOARD PAGE -->
       <div id="dashboardPage" class="page active">
         <div class="stats-grid">
-          <div class="stat-card" onclick="switchPage('kanban')">
-            <div class="stat-header"><div class="stat-label">全部订单</div></div>
+          <div class="stat-card" onclick="switchKanbanFilter('all'); switchPage('kanban')">
+            <div class="stat-label">全部订单</div>
             <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-sub">当前在册</div>
           </div>
-          <div class="stat-card red" onclick="document.getElementById('emergencyList').scrollIntoView({behavior:'smooth'})">
-            <div class="stat-header"><div class="stat-label">紧急</div></div>
+          <div class="stat-card accent" onclick="document.getElementById('emergencyList').parentElement.scrollIntoView({behavior:'smooth'})">
+            <div class="stat-label">紧急订单</div>
             <div class="stat-value" id="statUrgent">0</div>
+            <div class="stat-sub">需尽快处理</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-header"><div class="stat-label">生产中</div></div>
+          <div class="stat-card" onclick="switchKanbanFilter('producing'); switchPage('kanban')">
+            <div class="stat-label">生产中</div>
             <div class="stat-value" id="statProducing">0</div>
+            <div class="stat-sub" id="statProducingSub">含待启动</div>
           </div>
-          <div class="stat-card green">
-            <div class="stat-header"><div class="stat-label">已完成</div></div>
+          <div class="stat-card green" onclick="switchKanbanFilter('done'); switchPage('kanban')">
+            <div class="stat-label">已完成</div>
             <div class="stat-value" id="statDone">0</div>
-          </div>
-          <div class="stat-card" onclick="switchPage('inventory')">
-            <div class="stat-header"><div class="stat-label">库存品项</div></div>
-            <div class="stat-value" id="statInventory">-</div>
+            <div class="stat-sub">本月交付</div>
           </div>
         </div>
+
         <div class="panels">
           <div class="panel">
             <div class="panel-header">
@@ -258,7 +295,7 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
               <div class="panel-meta" id="urgentBadge">0单</div>
             </div>
             <div class="panel-body">
-              <div id="emergencyList"><div class="empty">暂无紧急订单</div></div>
+              <div id="emergencyList"><div class="empty">暂无紧急订单，状态良好 ✓</div></div>
             </div>
           </div>
           <div class="panel">
@@ -273,12 +310,14 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
               <div class="panel-title">订单看板</div>
               <div class="panel-meta" id="kanbanCount">0单</div>
             </div>
-            <div class="kanban-filters">
-              <button class="kb-tab active" onclick="switchKanbanFilter('all',this)">全部</button>
-              <button class="kb-tab" onclick="switchKanbanFilter('producing',this)">生产中</button>
-              <button class="kb-tab" onclick="switchKanbanFilter('done',this)">已完成</button>
+            <div class="panel-body" style="padding-top:16px">
+              <div class="kanban-filters">
+                <button class="kb-tab active" onclick="switchKanbanFilter('all',this)">全部</button>
+                <button class="kb-tab" onclick="switchKanbanFilter('producing',this)">生产中</button>
+                <button class="kb-tab" onclick="switchKanbanFilter('done',this)">已完成</button>
+              </div>
+              <div class="kanban-grid" id="kanbanGrid"><div class="empty">暂无订单</div></div>
             </div>
-            <div class="kanban-grid" id="kanbanGrid"><div class="empty">暂无订单</div></div>
           </div>
         </div>
       </div>
@@ -286,7 +325,7 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
       <!-- KANBAN PAGE -->
       <div id="kanbanPage" class="page">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:15px;font-weight:600">全部订单</div>
+          <div style="font-size:17px;font-weight:700">全部订单</div>
           <div style="font-size:13px;color:var(--text-tertiary)" id="kbPageCount">0单</div>
         </div>
         <div class="kanban-filters" style="margin:0 0 12px">
@@ -300,7 +339,7 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
       <!-- INVENTORY PAGE -->
       <div id="inventoryPage" class="page">
         <div style="display:flex;justify-content:space-between;align-items:center">
-          <div style="font-size:15px;font-weight:600">成品库存</div>
+          <div style="font-size:17px;font-weight:700">成品库存</div>
           <div style="font-size:12px;color:var(--text-tertiary);cursor:pointer" onclick="loadInventory()">刷新</div>
         </div>
         <div class="inv-grid" id="invGrid"><div class="empty">加载中...</div></div>
@@ -308,12 +347,13 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
 
       <!-- SETTINGS PAGE -->
       <div id="settingsPage" class="page">
-        <div style="font-size:15px;font-weight:600;margin-bottom:12px">设置</div>
-        <div style="background:var(--surface-1);border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden">
-          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">刷新间隔</div><div style="font-size:13px;color:var(--text-tertiary)">30秒</div></div>
-          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">深色模式</div><div style="font-size:13px;color:var(--text-tertiary)">始终开启</div></div>
-          <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)"><div style="font-size:13px">飞书数据源</div><div style="font-size:13px;color:var(--green)">已连接</div></div>
-          <div style="display:flex;justify-content:space-between;padding:12px 16px"><div style="font-size:13px">版本</div><div style="font-size:13px;color:var(--text-tertiary)">v4.0 - Linear Style</div></div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:16px">系统设置</div>
+        <div class="settings-group">
+          <div class="settings-row"><div class="settings-key">刷新间隔</div><div class="settings-val">30秒</div></div>
+          <div class="settings-row"><div class="settings-key">飞书数据源</div><div class="settings-val green">已连接 ✓</div></div>
+          <div class="settings-row"><div class="settings-key">最后同步</div><div class="settings-val" id="settingsSync">--</div></div>
+          <div class="settings-row"><div class="settings-key">版本</div><div class="settings-val">v4.0 · 合盛跟单系统</div></div>
+          <div class="settings-row"><div class="settings-key">构建</div><div class="settings-val">Express API Proxy · 飞书直连</div></div>
         </div>
       </div>
 
@@ -326,7 +366,7 @@ body {font-family:var(--font);font-size:14px;background:var(--bg);color:var(--te
 <div class="modal-content">
 <div class="modal-header">
   <div class="modal-title" id="modalTitle">订单详情</div>
-  <button class="modal-close" onclick="closeModal()">x</button>
+  <button class="modal-close" onclick="closeModal()">✕</button>
 </div>
 <div class="modal-body" id="modalBody"></div>
 </div>
@@ -385,32 +425,38 @@ async function loadOrders() {
 
 function renderAll() {
   var urgent = orders.filter(function(o){ return o.isUrgent && !o.isCompleted });
-  var producing = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单' });
-  var done = orders.filter(function(o){ return o.isCompleted });
+  var producing = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单'; });
+  var pending = orders.filter(function(o){ return !o.isCompleted && o.currentStep === '接单'; });
+  var done = orders.filter(function(o){ return o.isCompleted; });
+  var producingTotal = producing.length + pending.length;
+
   document.getElementById('statTotal').textContent = orders.length;
   document.getElementById('statUrgent').textContent = urgent.length;
-  document.getElementById('statProducing').textContent = producing.length;
+  document.getElementById('statProducing').textContent = producingTotal;
+  document.getElementById('statProducingSub').textContent = producing.length > 0 ? '车间进行中' : (pending.length > 0 ? '待启动' : '');
   document.getElementById('statDone').textContent = done.length;
   document.getElementById('navTotal').textContent = orders.length;
-  document.getElementById('navProducing').textContent = producing.length;
+  document.getElementById('navProducing').textContent = producingTotal;
+  document.getElementById('navUrgent').textContent = urgent.length;
   document.getElementById('urgentBadge').textContent = urgent.length + '单';
   document.getElementById('kbAll').textContent = orders.length;
-  document.getElementById('kbProd').textContent = producing.length;
+  document.getElementById('kbProd').textContent = producingTotal;
   document.getElementById('kbDone').textContent = done.length;
+
   renderEmergency(urgent);
-  renderStepProgress(producing);
+  renderStepProgress(producing.length > 0 ? producing : pending);
   renderKanban('kanbanGrid');
   document.getElementById('kanbanCount').textContent = orders.length + '单';
 }
 
 function renderEmergency(urgent) {
   var container = document.getElementById('emergencyList');
-  if (urgent.length === 0) { container.innerHTML = '<div class="empty">暂无紧急订单</div>'; return; }
+  if (urgent.length === 0) { container.innerHTML = '<div class="empty">暂无紧急订单，状态良好 ✓</div>'; return; }
   urgent.sort(function(a,b){ return (a.daysLeft||999) - (b.daysLeft||999); });
   var html = '';
   urgent.forEach(function(o) {
     var daysText = o.daysLeft === 0 ? '今天到期' : (o.daysLeft < 0 ? '已逾期' : '剩'+o.daysLeft+'天');
-    html += '<div class="emergency-item" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
+    html += '<div class="emergency-item red" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
     html += '<div class="emergency-dot"></div>';
     html += '<div class="emergency-info">';
     html += '<div class="emergency-code">' + escapeHtml(o.orderNumber) + '</div>';
@@ -428,7 +474,7 @@ function renderStepProgress(producing) {
   producing.forEach(function(o){ var idx = allSteps.indexOf(o.currentStep); if(idx>=0) counts[allSteps[idx]]++; });
   var total = producing.length || 1;
   var active = allSteps.filter(function(s){ return counts[s] > 0; });
-  document.getElementById('stepBadge').textContent = total + '单进行中';
+  document.getElementById('stepBadge').textContent = total + '单';
   if (active.length === 0) { document.getElementById('stepBody').innerHTML = '<div class="empty">暂无进行中订单</div>'; return; }
   var html = '<div class="step-list">';
   active.forEach(function(s){ var pct = Math.round((counts[s]/total)*100); html += '<div class="step-row"><div class="step-name">'+s+'</div><div class="step-bar"><div class="step-fill" style="width:'+pct+'%"></div></div><div class="step-count">'+counts[s]+'</div></div>'; });
@@ -447,18 +493,18 @@ function renderKanban(containerId) {
   var container = document.getElementById(containerId);
   if (!container) return;
   var filtered;
-  if (currentKanbanFilter === 'producing') filtered = orders.filter(function(o){ return !o.isCompleted && o.currentStep !== '接单'; });
+  if (currentKanbanFilter === 'producing') filtered = orders.filter(function(o){ return !o.isCompleted; });
   else if (currentKanbanFilter === 'done') filtered = orders.filter(function(o){ return o.isCompleted; });
-  else filtered = orders.filter(function(o){ return !o.isCompleted; });
-  filtered.sort(function(a,b){ if(a.isUrgent&&!b.isUrgent) return -1; if(!a.isUrgent&&b.isUrgent) return 1; return (a.estimatedDate||'').localeCompare(b.estimatedDate||''); });
+  else filtered = orders;
+  filtered.sort(function(a,b){ if(a.isUrgent&&!bisUrgent&&b.isUrgent) return 1; return (a.estimatedDate||'').localeCompare(b.estimatedDate||''); });
   if (filtered.length === 0) { container.innerHTML = '<div class="empty">' + (currentKanbanFilter==='done'?'暂无已完成订单':'暂无订单') + '</div>'; return; }
   var html = '';
   filtered.forEach(function(o) {
-    var statusClass = o.isUrgent ? 'urgent' : (o.isCompleted ? 'done' : 'producing');
-    var statusText = o.isCompleted ? '已完成' : o.currentStep;
+    var statusClass = o.isCompleted ? 'done' : (o.isUrgent ? 'urgent' : (o.currentStep !== '接单' ? 'producing' : 'pending'));
+    var statusText = o.isCompleted ? '已完成' : (o.isUrgent ? '紧急' : o.currentStep);
     html += '<div class="kb-card" onclick="showDetail(\'' + escapeHtml(o.orderNumber) + '\')">';
     html += '<div class="kb-top"><div class="kb-num">' + escapeHtml(o.orderNumber) + '</div><div class="kb-status ' + statusClass + '">' + statusText + '</div></div>';
-    html += '<div class="kb-customer">' + escapeHtml(o.productName) + '</div>';
+    html += '<div class="kb-product">' + escapeHtml(o.productName) + '</div>';
     html += '<div class="kb-meta"><div class="kb-progress"><div class="progress-bar"><div class="progress-fill" style="width:' + o.progress + '%"></div></div></div><div class="kb-date">' + escapeHtml(o.estimatedDate||'-') + '</div></div>';
     html += '</div>';
   });
@@ -488,7 +534,6 @@ function closeModal() {
   document.getElementById('orderModal').classList.remove('show');
 }
 
-// INVENTORY
 async function loadInventory() {
   try {
     var r = await fetch('/api/inventory');
@@ -497,19 +542,18 @@ async function loadInventory() {
       var latest = {};
       d.data.items.forEach(function(item) {
         var f = item.fields;
-        var name = f['产品名称'] || '-';
-        var num = f['产品编号'];
-        if (num && Array.isArray(num)) num = num[0].text || '-';
-        var stock = typeof f['当前库存'] === 'number' ? f['当前库存'] : 0;
-        var warehouse = f['仓库'] || '-';
-        var time = f['操作时间'] ? new Date(f['操作时间']).toLocaleString('zh-CN') : '-';
-        var key = name + '_' + warehouse;
-        if (!latest[key] || (time > latest[key].time)) latest[key] = {name:name, num:num, stock:stock, warehouse:warehouse, time:time};
+        var name = f['产品名称'] || '';
+        if (!name) return;
+        var qty = parseFloat(f['当前库存']) || 0;
+        if (!latest[name] || (f['操作时间'] && new Date(f['操作时间']) > new Date(latest[name].time||0))) {
+          latest[name] = { qty: qty, time: f['操作时间'] };
+        }
       });
-      inventoryData = Object.values(latest);
-      document.getElementById('navInventory').textContent = inventoryData.length;
-      document.getElementById('statInventory').textContent = inventoryData.length;
+      inventoryData = Object.keys(latest).map(function(name) {
+        return { name: name, qty: latest[name].qty };
+      });
       renderInventory();
+      document.getElementById('navInventory').textContent = inventoryData.length;
     }
   } catch(e) { console.error(e); }
 }
@@ -519,45 +563,54 @@ function renderInventory() {
   if (inventoryData.length === 0) { container.innerHTML = '<div class="empty">暂无库存数据</div>'; return; }
   var html = '';
   inventoryData.forEach(function(item) {
-    var level = item.stock > 20 ? 'ok' : (item.stock > 5 ? 'warn' : 'low');
-    html += '<div class="inv-card">';
-    html += '<div class="inv-top"><div class="inv-name">' + escapeHtml(item.name) + '</div><div class="inv-stock ' + level + '">' + item.stock + '</div></div>';
-    html += '<div class="inv-num">编号: ' + escapeHtml(item.num) + '</div>';
-    html += '<div class="inv-num">仓库: ' + escapeHtml(item.warehouse) + '</div>';
-    html += '</div>';
+    var level = item.qty <= 0 ? 'low' : 'ok';
+    html += '<div class="inv-card"><div class="inv-name">' + escapeHtml(item.name) + '</div><div class="inv-stock ' + level + '">' + item.qty + '</div><div class="inv-num">当前库存</div></div>';
   });
   container.innerHTML = html;
 }
 
 function switchPage(page, el) {
-  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
-  if (el) el.classList.add('active');
   document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-  var titles = {dashboard:'仪表盘', kanban:'看板', inventory:'库存', settings:'设置'};
-  document.getElementById('topbarTitle').textContent = titles[page] || page;
   document.getElementById(page + 'Page').classList.add('active');
-  if (page === 'kanban') renderKanban('kanbanPageGrid');
-  if (page === 'inventory') loadInventory();
+  document.querySelectorAll('.tab-item').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var topbarTitles = {dashboard:'仪表盘', kanban:'全部订单', inventory:'库存', settings:'设置'};
+  document.getElementById('topbarTitle').textContent = topbarTitles[page] || page;
+  if (el && el.classList) el.classList.add('active');
+  if (page === 'inventory' && inventoryData.length === 0) loadInventory();
+  if (page === 'dashboard') { switchKanbanFilter(currentKanbanFilter); }
+  if (page === 'kanban') { renderKanban('kanbanPageGrid', true); }
 }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function switchTab(page, el) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById(page + 'Page').classList.add('active');
+  document.querySelectorAll('.tab-item').forEach(function(t){ t.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  var topbarTitles = {dashboard:'仪表盘', kanban:'全部订单', inventory:'库存', settings:'设置'};
+  document.getElementById('topbarTitle').textContent = topbarTitles[page] || page;
+  if (page === 'inventory' && inventoryData.length === 0) loadInventory();
+  if (page === 'kanban') { currentKanbanFilter = 'all'; renderKanban('kanbanPageGrid', true); }
+  if (page === 'dashboard') { switchKanbanFilter(currentKanbanFilter); }
 }
 
-function pad(n) { return n < 10 ? '0' + n : n; }
-
-function updateTime() {
+function updateSyncTime() {
   var now = new Date();
-  document.getElementById('headerTime').textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
-  document.getElementById('syncTime').textContent = '同步 ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+  var t = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('headerTime').textContent = t;
+  document.getElementById('headerDate').textContent = now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate();
+  document.getElementById('syncTime').textContent = '同步 ' + t;
+  var syncel = document.getElementById('settingsSync');
+  if (syncel) syncel.textContent = t;
 }
-setInterval(updateTime, 1000);
-updateTime();
 
+// init
 loadOrders();
 loadInventory();
 setInterval(loadOrders, 30000);
+setInterval(loadInventory, 60000);
+setInterval(updateSyncTime, 1000);
+updateSyncTime();
 </script>
 </body>
 </html>
